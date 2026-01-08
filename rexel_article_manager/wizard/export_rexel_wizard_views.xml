@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Export Rexel Form View -->
+    <record id="view_export_rexel_wizard_form" model="ir.ui.view">
+        <field name="name">export.rexel.wizard.form</field>
+        <field name="model">export.rexel.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Export Format Rexel">
+                <group invisible="state != 'draft'">
+                    <group string="Options d'export">
+                        <field name="export_all"/>
+                        <field name="include_obsolete"/>
+                    </group>
+                    
+                    <group string="Sélection par famille" invisible="export_all">
+                        <field name="famille_ids" widget="many2many_tags" 
+                               options="{'no_create': True}"
+                               placeholder="Sélectionnez des familles..."/>
+                    </group>
+                    
+                    <group string="Sélection manuelle" invisible="export_all" colspan="2">
+                        <field name="article_ids" widget="many2many_tags"
+                               options="{'no_create': True}"
+                               placeholder="Ou sélectionnez des articles spécifiques..."/>
+                    </group>
+                    
+                    <separator string="Colonnes à exporter"/>
+                    
+                    <div class="mb-3">
+                        <button string="✓ Toutes" name="action_select_all_columns" type="object" class="btn-sm btn-secondary me-2"/>
+                        <button string="○ Minimales" name="action_select_minimal_columns" type="object" class="btn-sm btn-secondary"/>
+                    </div>
+                    
+                    <group string="Identification" col="4">
+                        <field name="col_reference_fabricant"/>
+                        <field name="col_trigramme_fabricant"/>
+                        <field name="col_fabricant_libelle"/>
+                        <field name="col_reference_rexel"/>
+                        <field name="col_designation"/>
+                        <field name="col_code_ean"/>
+                    </group>
+                    
+                    <group string="Prix et Unités" col="4">
+                        <field name="col_prix_base"/>
+                        <field name="col_prix_net"/>
+                        <field name="col_remise"/>
+                        <field name="col_unite_mesure"/>
+                        <field name="col_conditionnement"/>
+                        <field name="col_montant_d3e"/>
+                        <field name="col_unite_d3e"/>
+                    </group>
+                    
+                    <group string="Classification" col="4">
+                        <field name="col_famille"/>
+                        <field name="col_sous_famille"/>
+                        <field name="col_fonction"/>
+                        <field name="col_code_famille"/>
+                        <field name="col_code_sous_famille"/>
+                        <field name="col_code_fonction"/>
+                    </group>
+                    
+                    <group string="Informations" col="4">
+                        <field name="col_date_maj"/>
+                        <field name="col_obsolete"/>
+                        <field name="col_source"/>
+                    </group>
+                </group>
+                
+                <group invisible="state != 'done'">
+                    <group string="Résultat">
+                        <field name="articles_exported"/>
+                        <field name="file_name" invisible="1"/>
+                        <field name="file_data" filename="file_name" string="Télécharger le fichier"/>
+                    </group>
+                    
+                    <div class="alert alert-success" role="alert">
+                        <strong>✓ Export terminé !</strong>
+                        <p>Le fichier Excel au format Rexel est prêt. Cliquez sur le lien ci-dessus pour le télécharger.</p>
+                        <p>Ce fichier peut être réimporté dans Odoo ou utilisé avec d'autres systèmes compatibles.</p>
+                    </div>
+                </group>
+                
+                <field name="state" invisible="1"/>
+                
+                <footer>
+                    <button string="📥 Exporter" name="action_export" type="object" 
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button string="⬅ Retour" name="action_back" type="object" 
+                            class="btn-secondary" invisible="state != 'done'"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir le wizard -->
+    <record id="action_export_rexel_wizard" model="ir.actions.act_window">
+        <field name="name">Export Format Rexel</field>
+        <field name="res_model">export.rexel.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

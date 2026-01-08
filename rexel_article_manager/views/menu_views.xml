@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu principal -->
+    <menuitem id="menu_rexel_root"
+              name="Rexel Articles"
+              sequence="10"
+              web_icon="rexel_article_manager,static/description/icon.png"/>
+
+    <!-- Sous-menu Articles -->
+    <menuitem id="menu_rexel_articles"
+              name="Articles"
+              parent="menu_rexel_root"
+              sequence="10"/>
+
+    <menuitem id="menu_rexel_article_list"
+              name="Tous les articles"
+              parent="menu_rexel_articles"
+              action="action_rexel_article"
+              sequence="10"/>
+
+    <menuitem id="menu_rexel_product_families"
+              name="Familles de produits (Arborescence)"
+              parent="menu_rexel_articles"
+              action="action_rexel_product_family"
+              sequence="20"/>
+
+    <!-- Sous-menu Import/Export -->
+    <menuitem id="menu_rexel_import_export"
+              name="Import / Export"
+              parent="menu_rexel_root"
+              sequence="20"/>
+
+    <menuitem id="menu_import_articles"
+              name="📥 Importer depuis Excel"
+              parent="menu_rexel_import_export"
+              action="action_import_articles_wizard"
+              sequence="10"/>
+
+    <menuitem id="menu_import_reference"
+              name="🚀 Import rapide par référence"
+              parent="menu_rexel_import_export"
+              action="action_import_reference_wizard"
+              sequence="15"/>
+
+    <menuitem id="menu_export_rexel"
+              name="📤 Exporter format Rexel"
+              parent="menu_rexel_import_export"
+              action="action_export_rexel_wizard"
+              sequence="20"/>
+
+    <menuitem id="menu_export_naviwest"
+              name="📤 Exporter vers Naviwest"
+              parent="menu_rexel_import_export"
+              action="action_export_naviwest_wizard"
+              sequence="30"/>
+
+    <menuitem id="menu_export_quickdevis"
+              name="📤 Exporter vers QuickDevis 7"
+              parent="menu_rexel_import_export"
+              action="action_export_quickdevis_wizard"
+              sequence="40"/>
+
+    <menuitem id="menu_update_prices"
+              name="🔄 Mettre à jour les prix (API)"
+              parent="menu_rexel_import_export"
+              action="action_update_prices_wizard"
+              sequence="50"/>
+
+    <menuitem id="menu_create_products"
+              name="➕ Créer produits Odoo"
+              parent="menu_rexel_import_export"
+              action="action_create_products_wizard"
+              sequence="60"/>
+
+    <!-- Sous-menu Analyses -->
+    <menuitem id="menu_rexel_analyses"
+              name="Analyses"
+              parent="menu_rexel_root"
+              sequence="30"/>
+
+    <menuitem id="menu_price_history"
+              name="Historique des prix"
+              parent="menu_rexel_analyses"
+              action="action_rexel_price_history"
+              sequence="10"/>
+
+    <!-- Sous-menu Configuration -->
+    <menuitem id="menu_rexel_configuration"
+              name="Configuration"
+              parent="menu_rexel_root"
+              sequence="90"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_rexel_config"
+              name="Configuration Rexel"
+              parent="menu_rexel_configuration"
+              action="action_rexel_config"
+              sequence="10"/>
+
+</odoo>

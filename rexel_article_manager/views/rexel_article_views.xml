@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vue Liste (Tree) des Articles Rexel -->
+    <record id="view_rexel_article_tree" model="ir.ui.view">
+        <field name="name">rexel.article.tree</field>
+        <field name="model">rexel.article</field>
+        <field name="arch" type="xml">
+            <list string="Articles Rexel" multi_edit="1" export_xlsx="1" decoration-danger="is_obsolete">
+                <field name="is_obsolete" column_invisible="1"/>
+                <field name="trigramme_fabricant" string="Trigramme"/>
+                <field name="reference_fabricant" string="Réf. fabricant"/>
+                <field name="designation" string="Désignation"/>
+                <field name="reference_rexel" string="Réf. Rexel" optional="hide"/>
+                <field name="fabricant_libelle" string="Fabricant"/>
+                <field name="prix_base" string="Prix base"/>
+                <field name="prix_net" string="Prix net"/>
+                <field name="remise" string="Remise (%)"/>
+                <field name="unite_mesure" string="Unité"/>
+                <field name="unite_mesure_forcee" string="🔒" optional="hide" widget="boolean"/>
+                <field name="conditionnement" string="Cond."/>
+                <field name="famille_libelle" string="Famille"/>
+                <field name="sous_famille_libelle" string="Sous-famille" optional="hide"/>
+                <field name="fonction_libelle" string="Fonction" optional="hide"/>
+                <field name="montant_d3e" string="Écotaxe" optional="hide"/>
+                <field name="date_prix_valide" string="Prix valide au" widget="datetime"/>
+                <field name="date_tarif" string="Date tarif Excel" optional="hide"/>
+                <field name="last_api_update" string="Dernière MAJ API" optional="hide"/>
+                <field name="import_source" string="Source" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Articles Rexel -->
+    <record id="view_rexel_article_form" model="ir.ui.view">
+        <field name="name">rexel.article.form</field>
+        <field name="model">rexel.article</field>
+        <field name="arch" type="xml">
+            <form string="Article Rexel">
+                <header>
+                    <button name="action_view_price_history" string="Historique des prix" type="object" class="btn-info" invisible="price_history_count == 0"/>
+                    <button name="action_create_product" string="Créer produit Odoo" type="object" class="btn-success" invisible="is_product_created"/>
+                    <button name="action_update_product" string="Mettre à jour produit" type="object" class="btn-warning" invisible="not is_product_created"/>
+                    <button name="action_view_product" string="Voir produit Odoo" type="object" class="btn-primary" invisible="not is_product_created"/>
+                    <button name="action_mark_not_obsolete" string="Réactiver l'article" type="object" class="btn-success" invisible="not is_obsolete"/>
+                </header>
+                <sheet>
+                    <!-- Bandeau d'alerte pour articles obsolètes -->
+                    <div class="alert alert-danger" role="alert" invisible="not is_obsolete">
+                        <h4 class="alert-heading">⚠️ ARTICLE OBSOLÈTE</h4>
+                        <p>Cet article n'a pas été retrouvé lors de la dernière mise à jour via l'API Rexel.</p>
+                        <p><strong>Raison :</strong> <field name="obsolete_reason" nolabel="1" readonly="1"/></p>
+                        <p><strong>Date :</strong> <field name="obsolete_date" nolabel="1" readonly="1"/></p>
+                        <hr/>
+                        <p class="mb-0">Il est possible que cet article ait été supprimé du catalogue Rexel ou que la référence ait changé.</p>
+                    </div>
+                    
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options="{'terminology': 'archive'}"/>
+                        </button>
+                        <button name="action_view_price_history" type="object" class="oe_stat_button" icon="fa-line-chart">
+                            <field name="price_history_count" widget="statinfo" string="Changements"/>
+                        </button>
+                        <button name="action_view_product" type="object" class="oe_stat_button" icon="fa-cube" invisible="not is_product_created">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Produit</span>
+                                <span class="o_stat_text">Odoo</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group name="identification" string="Identification">
+                            <field name="reference_fabricant"/>
+                            <field name="reference_rexel"/>
+                            <field name="code_lidic_and_ref"/>
+                            <field name="code_ean13"/>
+                        </group>
+                        <group name="fabricant" string="Fabricant">
+                            <field name="trigramme_fabricant"/>
+                            <field name="fabricant_libelle"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group name="designation_group">
+                            <field name="designation" nolabel="1" placeholder="Désignation de l'article"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Tarifs" name="prices">
+                            <group>
+                                <group string="Prix">
+                                    <field name="prix_base"/>
+                                    <field name="prix_net"/>
+                                    <field name="prix_vente"/>
+                                    <field name="remise"/>
+                                </group>
+                                <group string="Conditionnement">
+                                    <field name="unite_mesure"/>
+                                    <field name="unite_mesure_forcee" widget="boolean_toggle" 
+                                           help="Cocher pour verrouiller l'unité et empêcher sa modification lors des mises à jour API"/>
+                                    <field name="conditionnement"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Dates de référence">
+                                    <field name="date_tarif" help="Date du tarif indiquée dans le fichier Excel Rexel"/>
+                                    <field name="last_api_update" readonly="1" help="Dernière mise à jour réussie via l'API Rexel"/>
+                                    <field name="date_prix_valide" readonly="1" widget="datetime" 
+                                           help="Date la plus récente entre la date tarif Excel et la dernière MAJ API"/>
+                                </group>
+                                <group string="Autres dates">
+                                    <field name="date_peremption"/>
+                                    <field name="import_source" readonly="1"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-info" role="alert">
+                                <p><strong>ℹ️ Note sur les dates :</strong></p>
+                                <ul>
+                                    <li><strong>Date de tarif</strong> : provient du fichier Excel Rexel (colonne DATE_TARIF)</li>
+                                    <li><strong>Dernière MAJ API</strong> : date de la dernière mise à jour via l'API productSalePrices</li>
+                                    <li><strong>Prix valide au</strong> : la date la plus récente des deux (indique la fraîcheur des prix)</li>
+                                </ul>
+                                <p class="mb-0"><em>L'API Rexel ne fournit pas de date de tarif, seuls les prix actuels sont retournés.</em></p>
+                            </div>
+                        </page>
+                        
+                        <page string="Classification" name="classification">
+                            <group>
+                                <group string="Hiérarchie Rexel">
+                                    <field name="famille_code"/>
+                                    <field name="famille_libelle"/>
+                                    <field name="sous_famille_code"/>
+                                    <field name="sous_famille_libelle"/>
+                                    <field name="fonction_code"/>
+                                    <field name="fonction_libelle"/>
+                                </group>
+                                <group string="Nœud hiérarchie">
+                                    <field name="family_node_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Écotaxe D3E" name="ecotax">
+                            <group>
+                                <group string="Informations écotaxe">
+                                    <field name="ref_d3e"/>
+                                    <field name="libelle_d3e"/>
+                                    <field name="code_d3e"/>
+                                </group>
+                                <group string="Montants">
+                                    <field name="unite_d3e"/>
+                                    <field name="montant_d3e"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Environnemental" name="environment">
+                            <group>
+                                <group string="Éco-responsabilité">
+                                    <field name="ecoscore"/>
+                                    <field name="selection_durable"/>
+                                </group>
+                                <group string="Média">
+                                    <field name="url_image" widget="url"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Produit Odoo" name="product_odoo">
+                            <group invisible="not is_product_created">
+                                <group>
+                                    <field name="product_id" readonly="1"/>
+                                    <field name="product_template_id" readonly="1"/>
+                                    <field name="is_product_created" invisible="1"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-success" role="alert" invisible="not is_product_created">
+                                <p><strong>✓ Produit Odoo créé</strong></p>
+                                <p>Cet article est lié à un produit Odoo utilisable dans les ventes, stocks et achats.</p>
+                            </div>
+                            <div class="alert alert-info" role="alert" invisible="is_product_created">
+                                <p><strong>ℹ Pas encore de produit Odoo</strong></p>
+                                <p>Cliquez sur "Créer produit Odoo" pour utiliser cet article dans vos devis et commandes.</p>
+                            </div>
+                        </page>
+                        
+                        <page string="Technique" name="technical">
+                            <group>
+                                <group>
+                                    <field name="import_source"/>
+                                    <field name="active"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="API Units" name="api_units">
+                            <group>
+                                <group string="Identification API">
+                                    <field name="api_code_interne_produit" readonly="1"/>
+                                    <field name="api_mot_unite" readonly="1"/>
+                                    <field name="api_type_conditionnement" readonly="1"/>
+                                    <field name="api_code_ean_unite" readonly="1"/>
+                                </group>
+                                <group string="Conversion">
+                                    <field name="api_nombre_conversion" readonly="1"/>
+                                    <field name="api_flag_unite_principale" readonly="1"/>
+                                    <field name="api_flag_unite_preparable" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Libellés">
+                                    <field name="api_libelle" readonly="1"/>
+                                    <field name="api_libelle_court" readonly="1"/>
+                                    <field name="api_libelle_long" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Poids">
+                                    <field name="api_poids_brut" readonly="1"/>
+                                    <field name="api_poids_net" readonly="1"/>
+                                </group>
+                                <group string="Dimensions extérieures (mm)">
+                                    <field name="api_longueur_ext" readonly="1"/>
+                                    <field name="api_largeur_ext" readonly="1"/>
+                                    <field name="api_hauteur_ext" readonly="1"/>
+                                    <field name="api_volume_ext" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Dimensions intérieures (mm)">
+                                    <field name="api_longueur_int" readonly="1"/>
+                                    <field name="api_largeur_int" readonly="1"/>
+                                    <field name="api_hauteur_int" readonly="1"/>
+                                    <field name="api_volume_int" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="API Stocks" name="api_stocks">
+                            <group>
+                                <group string="Stocks disponibles">
+                                    <field name="api_stock_agence" readonly="1"/>
+                                    <field name="api_stock_clr" readonly="1"/>
+                                    <field name="api_stock_csc" readonly="1"/>
+                                </group>
+                                <group string="Délais">
+                                    <field name="api_delai_agence" readonly="1"/>
+                                    <field name="api_delai_clr" readonly="1"/>
+                                    <field name="api_cutoff_livraison" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Quantités minimales">
+                                    <field name="api_min_vente_agence" readonly="1"/>
+                                    <field name="api_multiple_vente_agence" readonly="1"/>
+                                    <field name="api_min_vente_clr" readonly="1"/>
+                                    <field name="api_multiple_vente_clr" readonly="1"/>
+                                </group>
+                                <group string="Dates livraison">
+                                    <field name="api_code_centre_livraison" readonly="1"/>
+                                    <field name="api_date_livraison" readonly="1"/>
+                                    <field name="api_date_livraison_reliquat" readonly="1"/>
+                                    <field name="api_last_stock_update" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="API Prix" name="api_prices">
+                            <group>
+                                <group string="Prix API">
+                                    <field name="api_prix_base" readonly="1"/>
+                                    <field name="api_prix_net" readonly="1"/>
+                                    <field name="api_remise_pct" readonly="1"/>
+                                </group>
+                                <group string="Écotaxe API">
+                                    <field name="api_has_d3e" readonly="1"/>
+                                    <field name="api_d3e_quantite" readonly="1"/>
+                                    <field name="api_d3e_cout" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Conditions">
+                                    <field name="api_condition_label" readonly="1"/>
+                                    <field name="api_prix_label" readonly="1"/>
+                                    <field name="api_derogation" readonly="1"/>
+                                </group>
+                                <group string="Mise à jour">
+                                    <field name="api_last_price_update" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="API Premium" name="api_premium">
+                            <div class="alert alert-warning" role="alert">
+                                <h4>⭐ Fonctionnalités Pack Premium</h4>
+                                <p>Ces champs seront remplis automatiquement lorsque vous passerez au <strong>Pack APIs Premium</strong> Rexel.</p>
+                                <p>Le Pack Premium donne accès à :</p>
+                                <ul>
+                                    <li>📷 <strong>Images</strong> produits</li>
+                                    <li>📄 <strong>Fiches techniques</strong></li>
+                                    <li>♻️ <strong>Produits de remplacement</strong></li>
+                                    <li>⚡ <strong>CEE</strong> (Certificats d'économie d'énergie)</li>
+                                    <li>🌱 <strong>Éco-score</strong> détaillé</li>
+                                    <li>🌍 <strong>Sélection durable</strong></li>
+                                </ul>
+                            </div>
+                            <group>
+                                <group string="Médias (Premium)">
+                                    <field name="api_image_url" readonly="1"/>
+                                    <field name="api_fiche_technique_url" readonly="1" widget="url"/>
+                                    <field name="api_catalog_media_id" readonly="1"/>
+                                    <field name="api_rexel_id" readonly="1"/>
+                                    <field name="api_last_media_update" readonly="1"/>
+                                </group>
+                                <group string="Environnemental (Premium)">
+                                    <field name="api_note_ecoscore" readonly="1"/>
+                                    <field name="api_code_critere_env" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="CEE (Premium)">
+                                    <field name="api_cee_id_operation" readonly="1"/>
+                                    <field name="api_cee_reference" readonly="1"/>
+                                    <field name="api_cee_reference_rexel" readonly="1"/>
+                                    <field name="api_cee_code_secteur" readonly="1"/>
+                                    <field name="api_cee_code_sous_secteur" readonly="1"/>
+                                    <field name="api_cee_certificat" readonly="1"/>
+                                    <field name="api_cee_url_fiche" readonly="1" widget="url"/>
+                                    <field name="api_cee_statut" readonly="1"/>
+                                    <field name="api_cee_eligibilite_primexel" readonly="1"/>
+                                    <field name="api_cee_date_debut" readonly="1"/>
+                                    <field name="api_cee_date_fin" readonly="1"/>
+                                </group>
+                                <group string="Remplacement (Premium)">
+                                    <field name="api_remplacement_sens" readonly="1"/>
+                                    <field name="api_remplacement_code_interne" readonly="1"/>
+                                    <field name="api_remplacement_ref_rexel" readonly="1"/>
+                                    <field name="api_remplacement_date_debut" readonly="1"/>
+                                    <field name="api_remplacement_date_fin" readonly="1"/>
+                                    <field name="api_date_peremption" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Sélection Durable (Premium)">
+                                    <field name="api_sustainable_alternative" readonly="1"/>
+                                    <field name="api_sustainable_ref" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche avec filtres et groupements -->
+    <record id="view_rexel_article_search" model="ir.ui.view">
+        <field name="name">rexel.article.search</field>
+        <field name="model">rexel.article</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher Articles">
+                <field name="reference_fabricant" string="Référence" filter_domain="['|', ('reference_fabricant', 'ilike', self), ('reference_rexel', 'ilike', self)]"/>
+                <field name="designation"/>
+                <field name="code_ean13" string="EAN13"/>
+                <field name="famille_libelle"/>
+                <field name="sous_famille_libelle"/>
+                <field name="fonction_libelle"/>
+                <field name="fabricant_libelle"/>
+                <field name="trigramme_fabricant"/>
+                
+                <separator/>
+                <filter string="⚠️ Articles obsolètes" name="obsolete" domain="[('is_obsolete', '=', True)]"/>
+                <filter string="Articles actifs" name="not_obsolete" domain="[('is_obsolete', '=', False)]"/>
+                <separator/>
+                <filter string="Avec produit Odoo" name="with_product" domain="[('product_id', '!=', False)]"/>
+                <filter string="Sans produit Odoo" name="without_product" domain="[('product_id', '=', False)]"/>
+                <filter string="Sélection durable" name="selection_durable" domain="[('selection_durable', '=', True)]"/>
+                <separator/>
+                <filter string="Import Excel" name="import_excel" domain="[('import_source', '=', 'excel')]"/>
+                <filter string="Import API" name="import_api" domain="[('import_source', '=', 'api')]"/>
+                <separator/>
+                <filter string="Archivé" name="archived" domain="[('active', '=', False)]"/>
+                
+                <group expand="0" string="Grouper par">
+                    <filter string="Famille" name="group_famille" context="{'group_by': 'famille_libelle'}"/>
+                    <filter string="Sous-famille" name="group_sous_famille" context="{'group_by': 'sous_famille_libelle'}"/>
+                    <filter string="Fonction" name="group_fonction" context="{'group_by': 'fonction_libelle'}"/>
+                    <filter string="Fabricant" name="group_fabricant" context="{'group_by': 'fabricant_libelle'}"/>
+                    <filter string="Source import" name="group_source" context="{'group_by': 'import_source'}"/>
+                    <filter string="Obsolète" name="group_obsolete" context="{'group_by': 'is_obsolete'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue Pivot pour analyses -->
+    <record id="view_rexel_article_pivot" model="ir.ui.view">
+        <field name="name">rexel.article.pivot</field>
+        <field name="model">rexel.article</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse Articles">
+                <field name="famille_libelle" type="row"/>
+                <field name="sous_famille_libelle" type="row"/>
+                <field name="prix_net" type="measure"/>
+                <field name="remise" type="measure"/>
+                <field name="montant_d3e" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vue Graph pour visualisations -->
+    <record id="view_rexel_article_graph" model="ir.ui.view">
+        <field name="name">rexel.article.graph</field>
+        <field name="model">rexel.article</field>
+        <field name="arch" type="xml">
+            <graph string="Statistiques Articles" type="bar">
+                <field name="famille_libelle"/>
+                <field name="prix_net" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action principale -->
+    <record id="action_rexel_article" model="ir.actions.act_window">
+        <field name="name">Articles Rexel</field>
+        <field name="res_model">rexel.article</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créer votre premier article Rexel
+            </p>
+            <p>
+                Utilisez le menu "Importer des articles" pour charger vos articles depuis un fichier Excel cloud Rexel ou via l'API.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action serveur: Récupérer les unités en batch -->
+    <record id="action_fetch_units_batch" model="ir.actions.server">
+        <field name="name">📦 Récupérer les unités (API batch)</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_fetch_units_batch()
+        </field>
+    </record>
+    
+    <!-- Action serveur: Récupérer les stocks -->
+    <record id="action_fetch_stocks_batch" model="ir.actions.server">
+        <field name="name">📊 Récupérer les stocks (API)</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_fetch_stocks_batch()
+        </field>
+    </record>
+    
+    <!-- Action serveur: Récupérer les prix API -->
+    <record id="action_fetch_prices_batch" model="ir.actions.server">
+        <field name="name">💰 Récupérer les prix (API)</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_fetch_prices_batch()
+        </field>
+    </record>
+    
+    <!-- Action serveur: Récupérer TOUTES les données API -->
+    <record id="action_fetch_all_api_data" model="ir.actions.server">
+        <field name="name">🔄 Récupérer TOUTES les données API</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_fetch_all_api_data()
+        </field>
+    </record>
+    
+    <!-- Action serveur: Récupérer données Premium (images, CEE, etc.) -->
+    <record id="action_fetch_premium_data" model="ir.actions.server">
+        <field name="name">⭐ Récupérer données Premium (CEE, Eco, Remplacement)</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_fetch_premium_data()
+        </field>
+    </record>
+
+    <!-- Action serveur: Recalculer les remises -->
+    <record id="action_recalculate_discount" model="ir.actions.server">
+        <field name="name">🔢 Recalculer les remises</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_recalculate_discount()
+        </field>
+    </record>
+    
+    <!-- Action serveur: Export Rexel Excel -->
+    <record id="action_export_rexel" model="ir.actions.server">
+        <field name="name">📤 Export vers Rexel Excel</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Export Rexel Excel',
+    'res_model': 'export.rexel.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'default_article_ids': records.ids},
+}
+        </field>
+    </record>
+    
+    <!-- Action serveur: Export Naviwest -->
+    <record id="action_export_naviwest" model="ir.actions.server">
+        <field name="name">📤 Export vers Naviwest</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Export Naviwest',
+    'res_model': 'export.naviwest.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'default_article_ids': records.ids},
+}
+        </field>
+    </record>
+    
+    <!-- Action serveur: Export QuickDevis -->
+    <record id="action_export_quickdevis" model="ir.actions.server">
+        <field name="name">📤 Export vers QuickDevis</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Export QuickDevis',
+    'res_model': 'export.quickdevis.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'default_article_ids': records.ids},
+}
+        </field>
+    </record>
+    
+    <!-- Action serveur: Mise à jour globale via API -->
+    <record id="action_update_prices_api" model="ir.actions.server">
+        <field name="name">🔄 Mise à jour globale (API)</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Mise à jour des prix via API',
+    'res_model': 'update.prices.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'default_article_ids': records.ids},
+}
+        </field>
+    </record>
+    
+    <!-- Action serveur: Import rapide par référence -->
+    <record id="action_import_reference" model="ir.actions.server">
+        <field name="name">📥 Import rapide par référence</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Import rapide par référence',
+    'res_model': 'import.reference.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+}
+        </field>
+    </record>
+    
+    <!-- Action serveur: Créer produits Odoo -->
+    <record id="action_create_products" model="ir.actions.server">
+        <field name="name">➕ Créer produits Odoo</field>
+        <field name="model_id" ref="model_rexel_article"/>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Créer produits Odoo',
+    'res_model': 'create.products.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'default_article_ids': records.ids},
+}
+        </field>
+    </record>
+
+</odoo>

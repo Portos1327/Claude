@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue Formulaire de la configuration Rexel -->
+    <record id="view_rexel_config_form" model="ir.ui.view">
+        <field name="name">rexel.config.form</field>
+        <field name="model">rexel.config</field>
+        <field name="arch" type="xml">
+            <form string="Configuration Rexel Cloud">
+                <header>
+                    <button name="action_test_api_connection" string="🔌 Tester la connexion API" type="object" class="btn-primary" invisible="not api_enabled"/>
+                    <button name="action_verify_templates" string="📁 Vérifier les templates" type="object" class="btn-info"/>
+                    <button name="action_reset_token" string="🔄 Réinitialiser le token" type="object" class="btn-warning" invisible="not api_enabled" confirm="Voulez-vous vraiment réinitialiser le token OAuth2 ?"/>
+                    <button name="action_delete_and_recreate" string="🗑️ Supprimer et recréer" type="object" class="btn-danger" confirm="Voulez-vous vraiment supprimer cette configuration ? Vous devrez reconfigurer tous les paramètres."/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Mode d'import">
+                            <field name="import_mode" widget="radio"/>
+                        </group>
+                        <group string="API">
+                            <field name="api_enabled"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Configuration API" name="api_config">
+                            <div class="alert alert-info" role="alert" invisible="api_enabled">
+                                <p><strong>ℹ️ API désactivée</strong></p>
+                                <p>Activez l'API pour configurer les paramètres de connexion au cloud Rexel.</p>
+                            </div>
+                            
+                            <!-- SÉLECTEUR DE PACK API -->
+                            <group invisible="not api_enabled">
+                                <group string="Pack API Rexel">
+                                    <field name="api_pack" widget="radio" options="{'horizontal': true}"/>
+                                </group>
+                            </group>
+                            
+                            <div class="alert alert-success" role="alert" invisible="not api_enabled or api_pack != 'discovery'">
+                                <h4>🎁 Pack Découverte (Gratuit)</h4>
+                                <p><strong>Fonctionnalités disponibles :</strong></p>
+                                <ul>
+                                    <li>✅ Commandes (Orders)</li>
+                                    <li>✅ Stocks</li>
+                                    <li>✅ Prix (ProductPrice)</li>
+                                    <li>✅ Informations client (Customers)</li>
+                                    <li>✅ Devis (Quotes)</li>
+                                    <li>✅ Unités produit (Products/units)</li>
+                                </ul>
+                                <p><strong>Limite :</strong> 10 requêtes / seconde</p>
+                            </div>
+                            
+                            <div class="alert alert-primary" role="alert" invisible="not api_enabled or api_pack != 'premium'">
+                                <h4>⭐ Pack Premium (Abonnement)</h4>
+                                <p><strong>Toutes les fonctionnalités Découverte, plus :</strong></p>
+                                <ul>
+                                    <li>📷 Images produits</li>
+                                    <li>📄 Fiches techniques</li>
+                                    <li>🏷️ Attributs produits</li>
+                                    <li>🔄 Produits de remplacement</li>
+                                    <li>🌱 Éco-score</li>
+                                    <li>⚡ CEE (Certificats d'économie d'énergie)</li>
+                                    <li>♻️ Sélection durable</li>
+                                </ul>
+                                <p><strong>Limite :</strong> 20 requêtes / seconde</p>
+                            </div>
+                            
+                            <group invisible="not api_enabled">
+                                <group string="Authentification OAuth2 (Azure)">
+                                    <field name="oauth_tenant_id"/>
+                                    <field name="oauth_client_id"/>
+                                    <field name="oauth_client_secret" password="True"/>
+                                    <field name="oauth_scope"/>
+                                </group>
+                                <group string="API Rexel">
+                                    <field name="api_base_url"/>
+                                    <field name="subscription_key" password="True"/>
+                                </group>
+                            </group>
+                            
+                            <group invisible="not api_enabled">
+                                <group string="Informations client Rexel">
+                                    <field name="customer_id" placeholder="1234567"/>
+                                    <field name="customer_scope" placeholder="TURQUAND"/>
+                                </group>
+                                <group string="Statut du token">
+                                    <field name="access_token" readonly="1" password="True"/>
+                                    <field name="token_expires_at" readonly="1"/>
+                                </group>
+                            </group>
+                            
+                            <group invisible="not api_enabled">
+                                <group string="Limitation des requêtes (Rate Limiting)">
+                                    <field name="rate_limit_enabled"/>
+                                    <field name="rate_limit_per_second" invisible="not rate_limit_enabled"/>
+                                </group>
+                                <group string="Compteur requêtes" invisible="not rate_limit_enabled">
+                                    <field name="rate_limit_current_count" readonly="1"/>
+                                    <field name="rate_limit_last_reset" readonly="1"/>
+                                </group>
+                            </group>
+                            
+                            <div class="alert alert-info" role="alert" invisible="not api_enabled or not rate_limit_enabled">
+                                <h4>⚡ Limitation des requêtes API</h4>
+                                <p>Limites selon votre pack :</p>
+                                <ul>
+                                    <li><strong>Pack Découverte :</strong> 10 requêtes / seconde</li>
+                                    <li><strong>Pack Premium :</strong> 20 requêtes / seconde</li>
+                                </ul>
+                                <p>Le module respecte automatiquement cette limite lors des imports batch.</p>
+                            </div>
+                            
+                            <div class="alert alert-warning" role="alert" invisible="not api_enabled">
+                                <h4>📋 Paramètres Pack Découverte (pré-configurés)</h4>
+                                <p>Les valeurs par défaut correspondent au Pack Découverte API Rexel :</p>
+                                <ul>
+                                    <li><strong>Tenant ID :</strong> 822cd975-5643-4b7e-b398-69a164e55719</li>
+                                    <li><strong>Client ID :</strong> 4036c6d5-fce1-4569-a177-072a4e45bd39</li>
+                                    <li><strong>Scope :</strong> aee2ba94-a840-453a-9151-1355638ac04e/.default</li>
+                                    <li><strong>Clé abonnement :</strong> e9fa63ce8d934beb83c5a1f94817983a</li>
+                                </ul>
+                                <p>⚠️ Vous devez saisir le <strong>Client Secret</strong> et votre <strong>N° client Rexel</strong>.</p>
+                            </div>
+                        </page>
+                        
+                        <page string="Mise à jour automatique" name="auto_update">
+                            <group>
+                                <group string="Mise à jour des prix">
+                                    <field name="auto_update_prices"/>
+                                    <field name="auto_update_frequency" invisible="not auto_update_prices"/>
+                                </group>
+                            </group>
+                            <div class="alert alert-info" role="alert">
+                                <p><strong>ℹ️ Fonctionnalité à venir</strong></p>
+                                <p>La mise à jour automatique planifiée sera disponible dans une prochaine version.</p>
+                                <p>En attendant, utilisez le menu <strong>Import/Export → Mettre à jour les prix (API)</strong></p>
+                            </div>
+                        </page>
+                        
+                        <page string="Templates exports" name="templates">
+                            <group>
+                                <group string="Templates Naviwest">
+                                    <field name="template_beg" placeholder="C:\...\MAJ Base_Article - BEG avec formules V1.xlsx"/>
+                                    <field name="template_niedax" placeholder="C:\...\MAJ Base_Article - NIEDAX avec formules V1.xlsx"/>
+                                    <field name="template_cables" placeholder="C:\...\MAJ Base_Article - CABLES avec formules V1.xlsx"/>
+                                </group>
+                                <group string="Template QuickDevis">
+                                    <field name="template_quickdevis" placeholder="C:\...\Tarif câbles net rexel.xlsx"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Statistiques API" name="stats" invisible="not api_enabled">
+                            <group>
+                                <group string="Utilisation">
+                                    <field name="last_api_call" readonly="1"/>
+                                    <field name="api_call_count" readonly="1"/>
+                                </group>
+                                <group string="Dernière erreur">
+                                    <field name="last_api_error" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour la configuration -->
+    <record id="action_rexel_config" model="ir.actions.act_window">
+        <field name="name">Configuration Rexel Cloud</field>
+        <field name="res_model">rexel.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'form_view_initial_mode': 'edit'}</field>
+    </record>
+
+</odoo>
