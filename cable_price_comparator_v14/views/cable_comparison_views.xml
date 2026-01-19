@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue pivot comparaison prix par fournisseur -->
+    <record id="cable_pricelist_line_view_pivot_comparison" model="ir.ui.view">
+        <field name="name">cable.pricelist.line.pivot.comparison</field>
+        <field name="model">cable.pricelist.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Comparaison Prix">
+                <field name="master_product_id" type="row"/>
+                <field name="supplier_id" type="col"/>
+                <field name="price_per_km" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vue graphique évolution prix -->
+    <record id="cable_pricelist_line_view_graph" model="ir.ui.view">
+        <field name="name">cable.pricelist.line.graph</field>
+        <field name="model">cable.pricelist.line</field>
+        <field name="arch" type="xml">
+            <graph string="Prix par fournisseur" type="bar">
+                <field name="supplier_id"/>
+                <field name="price_per_km" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action comparaison -->
+    <record id="cable_comparison_action" model="ir.actions.act_window">
+        <field name="name">Comparaison Prix</field>
+        <field name="res_model">cable.pricelist.line</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="domain">[('master_product_id', '!=', False)]</field>
+        <field name="context">{
+            'search_default_group_by_master': 1,
+            'pivot_measures': ['price_per_km'],
+            'pivot_row_groupby': ['master_product_id'],
+            'pivot_column_groupby': ['supplier_id'],
+        }</field>
+    </record>
+</odoo>

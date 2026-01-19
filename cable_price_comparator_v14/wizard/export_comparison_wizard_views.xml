@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Export Comparaison -->
+    <record id="cable_export_comparison_wizard_view_form" model="ir.ui.view">
+        <field name="name">cable.export.comparison.wizard.form</field>
+        <field name="model">cable.export.comparison.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Export Comparaison Prix">
+                <group invisible="state != 'draft'">
+                    <group string="Format d'export">
+                        <field name="export_format" widget="radio"/>
+                    </group>
+                    
+                    <group string="Portée">
+                        <field name="export_scope" widget="radio"/>
+                        <field name="master_product_ids" widget="many2many_tags" 
+                               invisible="export_scope != 'selected'"/>
+                        <field name="cable_type_ids" widget="many2many_tags"
+                               invisible="export_scope != 'type'"/>
+                        <field name="min_suppliers" invisible="export_scope != 'multi_supplier'"/>
+                    </group>
+                    
+                    <group string="Filtres">
+                        <field name="supplier_ids" widget="many2many_tags"/>
+                    </group>
+                    
+                    <group string="Options">
+                        <field name="include_details"/>
+                        <field name="include_variations"/>
+                    </group>
+                </group>
+                
+                <group invisible="state != 'done'" string="Fichier généré">
+                    <field name="file_data" filename="file_name" readonly="1"/>
+                    <field name="file_name" readonly="1"/>
+                </group>
+                
+                <div invisible="state != 'draft'" class="alert alert-info" role="alert">
+                    <strong>Formats disponibles :</strong>
+                    <ul>
+                        <li><b>Tableau comparatif</b> : Excel avec code couleur (vert=mois courant, orange=M-1, rouge=ancien)</li>
+                        <li><b>Naviwest</b> : Format compatible import Naviwest</li>
+                        <li><b>QuickDevis 7</b> : Format compatible import QDV</li>
+                        <li><b>Rapport statistique</b> : Synthèse complète avec top écarts et évolution</li>
+                    </ul>
+                    <p>Tous les prix sont en <b>€/ml</b> (mètre linéaire)</p>
+                </div>
+                
+                <field name="state" invisible="1"/>
+                
+                <footer>
+                    <button name="action_export" type="object" string="Exporter" 
+                            class="btn-primary" invisible="state == 'done'"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="cable_export_comparison_wizard_action" model="ir.actions.act_window">
+        <field name="name">Exporter comparaison</field>
+        <field name="res_model">cable.export.comparison.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

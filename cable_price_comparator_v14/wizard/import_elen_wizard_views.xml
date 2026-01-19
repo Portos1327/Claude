@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue formulaire wizard import ELEN -->
+    <record id="cable_import_elen_wizard_view_form" model="ir.ui.view">
+        <field name="name">cable.import.elen.wizard.form</field>
+        <field name="model">cable.import.elen.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Tarif ELEN">
+                <group>
+                    <group string="Fichier">
+                        <field name="file_data" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                    <group string="Configuration">
+                        <field name="supplier_id"/>
+                        <field name="date_validity"/>
+                    </group>
+                </group>
+                <group>
+                    <group string="Options">
+                        <field name="create_master_products"/>
+                        <field name="update_existing"/>
+                    </group>
+                </group>
+                <separator string="Résultats" invisible="lines_processed == 0"/>
+                <group invisible="lines_processed == 0">
+                    <group>
+                        <field name="lines_processed"/>
+                        <field name="lines_created"/>
+                    </group>
+                    <group>
+                        <field name="lines_updated"/>
+                        <field name="masters_created"/>
+                    </group>
+                </group>
+                <group string="Erreurs" invisible="not errors">
+                    <field name="errors" nolabel="1" readonly="1"/>
+                </group>
+                <footer>
+                    <button name="action_import" type="object" 
+                            string="📥 Importer" class="btn-primary"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action wizard -->
+    <record id="cable_import_elen_wizard_action" model="ir.actions.act_window">
+        <field name="name">Import ELEN</field>
+        <field name="res_model">cable.import.elen.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

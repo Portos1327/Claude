@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extension de la vue formulaire product.template -->
+    <record id="product_template_form_view_cable_extension" model="ir.ui.view">
+        <field name="name">product.template.form.cable.extension</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <!-- Ajouter un onglet "Câble" après l'onglet Achats -->
+            <xpath expr="//page[@name='purchase']" position="after">
+                <page string="Câble" name="cable_info" 
+                      invisible="not cable_master_id">
+                    <group>
+                        <group string="Caractéristiques techniques">
+                            <field name="cable_type_code" readonly="1"/>
+                            <field name="cable_config" readonly="1"/>
+                            <field name="cable_section" readonly="1"/>
+                            <field name="cable_master_id" readonly="1"/>
+                        </group>
+                        <group string="Documents techniques">
+                            <field name="datasheet_url" widget="url"/>
+                            <field name="dop_url" widget="url"/>
+                            <button name="action_open_datasheet" type="object"
+                                    string="📄 Ouvrir fiche technique"
+                                    class="btn-primary"
+                                    invisible="not datasheet_url"/>
+                            <button name="action_open_dop" type="object"
+                                    string="📋 Ouvrir DOP"
+                                    class="btn-secondary"
+                                    invisible="not dop_url"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Ajouter les champs dans la recherche -->
+    <record id="product_template_search_view_cable_extension" model="ir.ui.view">
+        <field name="name">product.template.search.cable.extension</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='categ_id']" position="after">
+                <field name="cable_type_code"/>
+                <field name="cable_master_id"/>
+            </xpath>
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter name="filter_cables" string="Câbles" 
+                        domain="[('cable_master_id', '!=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

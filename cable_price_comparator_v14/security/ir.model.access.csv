@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_cable_type_all,cable.type.all,model_cable_type,base.group_user,1,1,1,1
+access_cable_supplier_all,cable.supplier.all,model_cable_supplier,base.group_user,1,1,1,1
+access_cable_supplier_excel_config_all,cable.supplier.excel.config.all,model_cable_supplier_excel_config,base.group_user,1,1,1,1
+access_cable_supplier_price_all,cable.supplier.price.all,model_cable_supplier_price,base.group_user,1,1,1,1
+access_cable_pricelist_all,cable.pricelist.all,model_cable_pricelist,base.group_user,1,1,1,1
+access_cable_pricelist_line_all,cable.pricelist.line.all,model_cable_pricelist_line,base.group_user,1,1,1,1
+access_cable_product_master_all,cable.product.master.all,model_cable_product_master,base.group_user,1,1,1,1
+access_cable_product_match_all,cable.product.match.all,model_cable_product_match,base.group_user,1,1,1,1
+access_cable_import_wizard_all,cable.import.pricelist.wizard.all,model_cable_import_pricelist_wizard,base.group_user,1,1,1,1
+access_cable_matching_wizard_all,cable.run.matching.wizard.all,model_cable_run_matching_wizard,base.group_user,1,1,1,1
+access_cable_export_wizard_all,cable.export.comparison.wizard.all,model_cable_export_comparison_wizard,base.group_user,1,1,1,1
+access_cable_import_elen_wizard_all,cable.import.elen.wizard.all,model_cable_import_elen_wizard,base.group_user,1,1,1,1

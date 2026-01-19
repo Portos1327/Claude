@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue liste correspondances -->
+    <record id="cable_product_match_view_list" model="ir.ui.view">
+        <field name="name">cable.product.match.list</field>
+        <field name="model">cable.product.match</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'validated'"
+                  decoration-muted="state == 'rejected'">
+                <field name="master_product_id"/>
+                <field name="pricelist_line_id"/>
+                <field name="supplier_id"/>
+                <field name="match_score" widget="progressbar"/>
+                <field name="match_method"/>
+                <field name="state" widget="badge"/>
+                <field name="is_validated"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action correspondances -->
+    <record id="cable_product_match_action" model="ir.actions.act_window">
+        <field name="name">Correspondances</field>
+        <field name="res_model">cable.product.match</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

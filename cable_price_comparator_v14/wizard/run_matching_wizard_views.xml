@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Matching -->
+    <record id="cable_run_matching_wizard_view_form" model="ir.ui.view">
+        <field name="name">cable.run.matching.wizard.form</field>
+        <field name="model">cable.run.matching.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Lancer le matching">
+                <group invisible="state != 'draft'">
+                    <group string="Tarifs à traiter">
+                        <field name="pricelist_ids" widget="many2many_tags"/>
+                        <field name="scope" widget="radio"/>
+                    </group>
+                    <group string="Options">
+                        <field name="create_masters"/>
+                        <field name="min_score"/>
+                    </group>
+                </group>
+                
+                <group invisible="state != 'done'" string="Résultats">
+                    <field name="result_log" nolabel="1" readonly="1"/>
+                    <group>
+                        <field name="processed_count"/>
+                        <field name="matched_count"/>
+                        <field name="created_count"/>
+                    </group>
+                </group>
+                
+                <field name="state" invisible="1"/>
+                
+                <footer>
+                    <button name="action_run" type="object" string="Lancer" 
+                            class="btn-primary" invisible="state == 'done'"/>
+                    <button name="action_view_matches" type="object" string="Voir les correspondances" 
+                            class="btn-info" invisible="state != 'done'"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="cable_run_matching_wizard_action" model="ir.actions.act_window">
+        <field name="name">Lancer le matching</field>
+        <field name="res_model">cable.run.matching.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

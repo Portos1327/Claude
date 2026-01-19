@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue liste produits maîtres -->
+    <record id="cable_product_master_view_list" model="ir.ui.view">
+        <field name="name">cable.product.master.list</field>
+        <field name="model">cable.product.master</field>
+        <field name="arch" type="xml">
+            <list decoration-success="price_spread &lt; 10" 
+                  decoration-warning="price_spread &gt;= 10 and price_spread &lt; 25"
+                  decoration-danger="price_spread &gt;= 25">
+                <field name="cable_type_code" string="Type"/>
+                <field name="conductor_config" string="Config"/>
+                <field name="section_text" string="Section"/>
+                <field name="matching_key" string="Clé"/>
+                <field name="name"/>
+                <field name="supplier_count"/>
+                <field name="price_min" string="Min €/ml" widget="float" digits="[12,4]"/>
+                <field name="price_max" string="Max €/ml" widget="float" digits="[12,4]"/>
+                <field name="price_spread" string="Écart %" widget="progressbar"/>
+                <field name="best_supplier_id"/>
+                <field name="best_price" string="Meilleur €/ml" widget="float" digits="[12,4]"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire produit maître -->
+    <record id="cable_product_master_view_form" model="ir.ui.view">
+        <field name="name">cable.product.master.form</field>
+        <field name="model">cable.product.master</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_odoo_product" type="object"
+                            string="🛒 Créer produit Odoo" class="btn-success"
+                            invisible="product_tmpl_id"/>
+                    <button name="action_view_comparison" type="object"
+                            string="📊 Comparaison détaillée" class="btn-primary"/>
+                    <button name="action_view_price_history" type="object"
+                            string="📈 Historique prix" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_comparison" type="object"
+                                class="oe_stat_button" icon="fa-balance-scale">
+                            <field name="supplier_count" widget="statinfo" string="Fournisseurs"/>
+                        </button>
+                        <button type="object" name="action_create_odoo_product"
+                                class="oe_stat_button" icon="fa-cube"
+                                invisible="not product_tmpl_id">
+                            <span class="o_stat_text">Produit Odoo</span>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Produit créé" 
+                            invisible="not product_tmpl_id" bg_color="bg-success"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                        <h3><field name="reference_unified" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Caractéristiques">
+                            <field name="cable_type_id"/>
+                            <field name="cable_type_code"/>
+                            <field name="nb_conductors"/>
+                            <field name="has_ground"/>
+                            <field name="conductor_config" readonly="1"/>
+                            <field name="section"/>
+                            <field name="section_text" readonly="1"/>
+                            <field name="conductor_material"/>
+                            <field name="voltage_class"/>
+                        </group>
+                        <group string="Comparaison prix (€/ml)">
+                            <field name="price_min" string="Prix min"/>
+                            <field name="price_max" string="Prix max"/>
+                            <field name="price_avg" string="Prix moyen"/>
+                            <field name="price_spread" widget="progressbar"/>
+                            <field name="best_supplier_id"/>
+                            <field name="best_price" string="Meilleur prix"/>
+                            <field name="avg_price_variation" string="Variation moyenne M-1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Identifiants">
+                            <field name="matching_key" readonly="1"/>
+                            <field name="reference_unified" readonly="1"/>
+                            <field name="norme"/>
+                        </group>
+                        <group string="Liens">
+                            <field name="product_tmpl_id"/>
+                            <field name="rexel_article_id"/>
+                            <field name="best_datasheet_url" widget="url" string="Fiche technique"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Prix fournisseurs" name="supplier_prices">
+                            <field name="supplier_price_ids">
+                                <list editable="bottom" decoration-success="is_best_price">
+                                    <field name="supplier_id"/>
+                                    <field name="supplier_ref"/>
+                                    <field name="brand"/>
+                                    <field name="price_net"/>
+                                    <field name="price_unit"/>
+                                    <field name="price_per_ml" string="€/ml"/>
+                                    <field name="availability" widget="badge"/>
+                                    <field name="datasheet_url" widget="url" string="Fiche"/>
+                                    <field name="is_best_price" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Lignes tarifaires (legacy)" name="pricelist_lines">
+                            <field name="pricelist_line_ids">
+                                <list>
+                                    <field name="supplier_id"/>
+                                    <field name="reference"/>
+                                    <field name="designation"/>
+                                    <field name="price_net"/>
+                                    <field name="price_per_ml" string="€/ml"/>
+                                    <field name="price_unit"/>
+                                    <field name="pricelist_id"/>
+                                    <field name="match_score"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Recherche produits maîtres -->
+    <record id="cable_product_master_view_search" model="ir.ui.view">
+        <field name="name">cable.product.master.search</field>
+        <field name="model">cable.product.master</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="cable_type_code"/>
+                <field name="conductor_config"/>
+                <field name="section"/>
+                <separator/>
+                <filter name="filter_multi" string="Multi-fournisseurs" 
+                        domain="[('supplier_count', '&gt;=', 2)]"/>
+                <filter name="filter_high_spread" string="Écart &gt; 20%" 
+                        domain="[('price_spread', '&gt;=', 20)]"/>
+                <separator/>
+                <filter name="filter_r2v" string="R2V" 
+                        domain="[('cable_type_code', '=', 'R2V')]"/>
+                <filter name="filter_ar2v" string="AR2V" 
+                        domain="[('cable_type_code', '=', 'AR2V')]"/>
+                <filter name="filter_h07" string="H07" 
+                        domain="[('cable_type_code', 'ilike', 'H07')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_by_type" string="Type câble" 
+                            context="{'group_by': 'cable_type_code'}"/>
+                    <filter name="group_by_section" string="Section" 
+                            context="{'group_by': 'section'}"/>
+                    <filter name="group_by_best" string="Meilleur fournisseur" 
+                            context="{'group_by': 'best_supplier_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue Pivot -->
+    <record id="cable_product_master_view_pivot" model="ir.ui.view">
+        <field name="name">cable.product.master.pivot</field>
+        <field name="model">cable.product.master</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="cable_type_code" type="row"/>
+                <field name="section" type="row"/>
+                <field name="price_avg" type="measure"/>
+                <field name="price_spread" type="measure"/>
+                <field name="supplier_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Action produits maîtres -->
+    <record id="cable_product_master_action" model="ir.actions.act_window">
+        <field name="name">Produits maîtres</field>
+        <field name="res_model">cable.product.master</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="context">{'search_default_filter_multi': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun produit maître
+            </p>
+            <p>
+                Les produits maîtres sont créés automatiquement lors de l'import
+                et du matching des tarifs. Ils regroupent les articles identiques
+                de différents fournisseurs.
+            </p>
+        </field>
+    </record>
+</odoo>

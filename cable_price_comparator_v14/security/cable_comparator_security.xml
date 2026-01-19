@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Groupes de sécurité -->
+    <record id="module_category_cable_comparator" model="ir.module.category">
+        <field name="name">Comparateur Prix Câbles</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="group_cable_comparator_user" model="res.groups">
+        <field name="name">Utilisateur</field>
+        <field name="category_id" ref="module_category_cable_comparator"/>
+    </record>
+
+    <record id="group_cable_comparator_manager" model="res.groups">
+        <field name="name">Responsable</field>
+        <field name="category_id" ref="module_category_cable_comparator"/>
+        <field name="implied_ids" eval="[(4, ref('group_cable_comparator_user'))]"/>
+    </record>
+</odoo>

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue liste lignes avec code couleur fraîcheur -->
+    <record id="cable_pricelist_line_view_list" model="ir.ui.view">
+        <field name="name">cable.pricelist.line.list</field>
+        <field name="model">cable.pricelist.line</field>
+        <field name="arch" type="xml">
+            <list decoration-success="tarif_freshness == 'current'" 
+                  decoration-warning="tarif_freshness == 'previous'"
+                  decoration-danger="tarif_freshness == 'old'">
+                <field name="supplier_code"/>
+                <field name="reference"/>
+                <field name="designation"/>
+                <field name="cable_type_code" string="Type"/>
+                <field name="conductor_config" string="Config"/>
+                <field name="section_text" string="Section"/>
+                <field name="matching_key" string="Clé matching"/>
+                <field name="price_net" string="Prix Net"/>
+                <field name="price_unit"/>
+                <field name="price_per_ml" string="€/ml" widget="float" digits="[12,4]"/>
+                <field name="date_tarif" string="Date tarif" optional="show"/>
+                <field name="tarif_freshness" widget="badge"
+                       decoration-success="tarif_freshness == 'current'"
+                       decoration-warning="tarif_freshness == 'previous'"
+                       decoration-danger="tarif_freshness == 'old'" optional="show"/>
+                <field name="master_product_id" optional="show"/>
+                <field name="is_matched" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire ligne -->
+    <record id="cable_pricelist_line_view_form" model="ir.ui.view">
+        <field name="name">cable.pricelist.line.form</field>
+        <field name="model">cable.pricelist.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_extract_characteristics" type="object"
+                            string="🔍 Extraire caractéristiques" class="btn-secondary"/>
+                    <button name="action_find_or_create_master" type="object"
+                            string="🔗 Lier/Créer produit maître" class="btn-primary"
+                            invisible="master_product_id"/>
+                    <button name="action_view_comparison" type="object"
+                            string="📊 Voir comparaison" class="btn-info"
+                            invisible="not master_product_id"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="reference"/>
+                        <h1><field name="reference"/></h1>
+                        <field name="designation" placeholder="Désignation"/>
+                    </div>
+                    <group>
+                        <group string="Source">
+                            <field name="pricelist_id"/>
+                            <field name="supplier_id"/>
+                            <field name="date_tarif"/>
+                            <field name="tarif_freshness" widget="badge"/>
+                            <field name="family"/>
+                            <field name="ean"/>
+                        </group>
+                        <group string="Prix">
+                            <field name="price_gross"/>
+                            <field name="discount"/>
+                            <field name="price_net"/>
+                            <field name="price_unit"/>
+                            <field name="price_per_ml" string="Prix €/ml"/>
+                            <field name="price_per_km" string="Prix €/km (compat)"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Fabricant">
+                            <field name="manufacturer_ref"/>
+                            <field name="manufacturer_name"/>
+                        </group>
+                        <group string="Distributeur">
+                            <field name="distributor_ref"/>
+                            <field name="distributor_name"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Évolution prix">
+                            <field name="price_previous_month"/>
+                            <field name="price_variation"/>
+                            <field name="price_variation_abs"/>
+                            <field name="price_trend" widget="badge"/>
+                        </group>
+                        <group string="Caractéristiques extraites">
+                            <field name="cable_type_id"/>
+                            <field name="cable_type_code"/>
+                            <field name="nb_conductors"/>
+                            <field name="has_ground"/>
+                            <field name="conductor_config" readonly="1"/>
+                            <field name="section"/>
+                            <field name="section_text" readonly="1"/>
+                            <field name="matching_key" readonly="1"/>
+                            <field name="color"/>
+                            <field name="norme"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Correspondance">
+                            <field name="master_product_id"/>
+                            <field name="product_id"/>
+                            <field name="match_score"/>
+                            <field name="match_method"/>
+                            <field name="matching_key"/>
+                        </group>
+                        <group string="Documents et Images">
+                            <field name="image_url" widget="url"/>
+                            <field name="datasheet_url" widget="url"/>
+                            <field name="dop_url" widget="url"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Recherche lignes -->
+    <record id="cable_pricelist_line_view_search" model="ir.ui.view">
+        <field name="name">cable.pricelist.line.search</field>
+        <field name="model">cable.pricelist.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="reference"/>
+                <field name="designation"/>
+                <field name="supplier_id"/>
+                <field name="family"/>
+                <field name="cable_type_code"/>
+                <field name="master_product_id"/>
+                <separator/>
+                <filter name="filter_matched" string="Correspondus" 
+                        domain="[('is_matched', '=', True)]"/>
+                <filter name="filter_unmatched" string="Non correspondus" 
+                        domain="[('is_matched', '=', False)]"/>
+                <separator/>
+                <filter name="filter_current" string="Tarif mois courant" 
+                        domain="[('tarif_freshness', '=', 'current')]"/>
+                <filter name="filter_previous" string="Tarif mois précédent" 
+                        domain="[('tarif_freshness', '=', 'previous')]"/>
+                <filter name="filter_old" string="Tarif ancien" 
+                        domain="[('tarif_freshness', '=', 'old')]"/>
+                <separator/>
+                <filter name="filter_up" string="↗ Prix en hausse" 
+                        domain="[('price_trend', '=', 'up')]"/>
+                <filter name="filter_down" string="↘ Prix en baisse" 
+                        domain="[('price_trend', '=', 'down')]"/>
+                <separator/>
+                <filter name="filter_r2v" string="R2V" 
+                        domain="[('cable_type_code', '=', 'R2V')]"/>
+                <filter name="filter_ar2v" string="AR2V" 
+                        domain="[('cable_type_code', '=', 'AR2V')]"/>
+                <filter name="filter_h07vu" string="H07V-U" 
+                        domain="[('cable_type_code', '=', 'H07V-U')]"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_by_supplier" string="Fournisseur" 
+                            context="{'group_by': 'supplier_id'}"/>
+                    <filter name="group_by_type" string="Type câble" 
+                            context="{'group_by': 'cable_type_code'}"/>
+                    <filter name="group_by_family" string="Famille" 
+                            context="{'group_by': 'family'}"/>
+                    <filter name="group_by_master" string="Produit maître" 
+                            context="{'group_by': 'master_product_id'}"/>
+                    <filter name="group_by_freshness" string="Fraîcheur tarif" 
+                            context="{'group_by': 'tarif_freshness'}"/>
+                    <filter name="group_by_trend" string="Tendance prix" 
+                            context="{'group_by': 'price_trend'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vue Pivot pour comparaison -->
+    <record id="cable_pricelist_line_view_pivot" model="ir.ui.view">
+        <field name="name">cable.pricelist.line.pivot</field>
+        <field name="model">cable.pricelist.line</field>
+        <field name="arch" type="xml">
+            <pivot string="Comparaison Prix ML">
+                <field name="master_product_id" type="row"/>
+                <field name="supplier_id" type="col"/>
+                <field name="price_per_ml" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vue Graph -->
+    <record id="cable_pricelist_line_view_graph" model="ir.ui.view">
+        <field name="name">cable.pricelist.line.graph</field>
+        <field name="model">cable.pricelist.line</field>
+        <field name="arch" type="xml">
+            <graph string="Prix par fournisseur" type="bar">
+                <field name="supplier_id"/>
+                <field name="price_per_ml" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action lignes -->
+    <record id="cable_pricelist_line_action" model="ir.actions.act_window">
+        <field name="name">Articles tarifs</field>
+        <field name="res_model">cable.pricelist.line</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="context">{'search_default_group_by_supplier': 1}</field>
+    </record>
+</odoo>

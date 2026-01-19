@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="cable_import_pricelist_wizard_view_form" model="ir.ui.view">
+        <field name="name">cable.import.pricelist.wizard.form</field>
+        <field name="model">cable.import.pricelist.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Tarif Cables">
+                <group invisible="state != 'draft'">
+                    <group string="Source">
+                        <field name="import_mode" widget="radio"/>
+                        <field name="supplier_id" options="{'no_create': True}"/>
+                        <field name="config_id" invisible="import_mode != 'excel'" options="{'no_create': True}"/>
+                    </group>
+                    <group string="Fichier Excel" invisible="import_mode != 'excel'">
+                        <field name="file_data" filename="file_name"/>
+                        <field name="file_name" invisible="1"/>
+                        <field name="sheet_names" invisible="not sheet_names"/>
+                        <field name="sheet_name" placeholder="Laisser vide pour la premiere"/>
+                        <field name="header_row"/>
+                    </group>
+                    <group string="Periode tarifaire">
+                        <field name="date_validity"/>
+                        <field name="period_name" placeholder="Ex: Janvier 2026"/>
+                    </group>
+                </group>
+                <group invisible="state != 'draft' or import_mode != 'excel'" string="Mapping colonnes">
+                    <group>
+                        <field name="col_reference"/>
+                        <field name="col_designation"/>
+                        <field name="col_price_gross"/>
+                        <field name="col_discount"/>
+                        <field name="col_price_net"/>
+                    </group>
+                    <group>
+                        <field name="col_family"/>
+                        <field name="col_weight"/>
+                        <field name="col_ean"/>
+                        <field name="col_datasheet_url"/>
+                        <field name="price_unit"/>
+                    </group>
+                </group>
+                <group invisible="state != 'draft'" string="Options">
+                    <field name="extract_characteristics"/>
+                    <field name="run_matching"/>
+                    <field name="create_masters" invisible="not run_matching"/>
+                </group>
+                <group invisible="state != 'preview'">
+                    <field name="preview_html" nolabel="1"/>
+                </group>
+                <group invisible="state != 'done'">
+                    <field name="result_log" nolabel="1" readonly="1"/>
+                    <field name="pricelist_id" readonly="1"/>
+                </group>
+                <field name="state" invisible="1"/>
+                <footer>
+                    <button name="action_preview" type="object" string="Apercu" class="btn-secondary" invisible="state != 'draft' or import_mode != 'excel'"/>
+                    <button name="action_import" type="object" string="Importer" class="btn-primary" invisible="state == 'done'"/>
+                    <button name="action_back" type="object" string="Retour" class="btn-secondary" invisible="state == 'draft'"/>
+                    <button name="action_open_pricelist" type="object" string="Ouvrir le tarif" class="btn-success" invisible="state != 'done'"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="cable_import_pricelist_wizard_action" model="ir.actions.act_window">
+        <field name="name">Importer un tarif</field>
+        <field name="res_model">cable.import.pricelist.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

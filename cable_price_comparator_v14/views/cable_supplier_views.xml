@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue liste fournisseurs -->
+    <record id="cable_supplier_view_list" model="ir.ui.view">
+        <field name="name">cable.supplier.list</field>
+        <field name="model">cable.supplier</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="supplier_type"/>
+                <field name="pricelist_count"/>
+                <field name="line_count"/>
+                <field name="last_import_date"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire fournisseur -->
+    <record id="cable_supplier_view_form" model="ir.ui.view">
+        <field name="name">cable.supplier.form</field>
+        <field name="model">cable.supplier</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_view_pricelists" type="object" 
+                            string="Tarifs" class="oe_stat_button" icon="fa-list"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_pricelists" type="object"
+                                class="oe_stat_button" icon="fa-list">
+                            <field name="pricelist_count" widget="statinfo" string="Tarifs"/>
+                        </button>
+                        <button name="action_view_lines" type="object"
+                                class="oe_stat_button" icon="fa-bars">
+                            <field name="line_count" widget="statinfo" string="Articles"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archivé" bg_color="text-bg-danger" 
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Nom du fournisseur"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="supplier_type"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group>
+                            <field name="website" widget="url"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="last_import_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Configuration Excel" name="excel_config">
+                            <group string="Colonnes par défaut">
+                                <group>
+                                    <field name="default_ref_column"/>
+                                    <field name="default_designation_column"/>
+                                    <field name="default_price_column"/>
+                                </group>
+                                <group>
+                                    <field name="default_unit_column"/>
+                                    <field name="default_family_column"/>
+                                    <field name="default_price_unit"/>
+                                </group>
+                            </group>
+                            <field name="excel_config_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="sheet_name"/>
+                                    <field name="col_reference"/>
+                                    <field name="col_designation"/>
+                                    <field name="col_price_net"/>
+                                    <field name="price_unit"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action fournisseurs -->
+    <record id="cable_supplier_action" model="ir.actions.act_window">
+        <field name="name">Fournisseurs</field>
+        <field name="res_model">cable.supplier</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez votre premier fournisseur de câbles
+            </p>
+            <p>
+                Les fournisseurs permettent d'organiser vos tarifs par source
+                (fabricants, distributeurs, grossistes).
+            </p>
+        </field>
+    </record>
+</odoo>

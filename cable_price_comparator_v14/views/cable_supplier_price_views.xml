@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue liste prix fournisseurs -->
+    <record id="cable_supplier_price_view_list" model="ir.ui.view">
+        <field name="name">cable.supplier.price.list</field>
+        <field name="model">cable.supplier.price</field>
+        <field name="arch" type="xml">
+            <list decoration-success="is_best_price" editable="bottom">
+                <field name="supplier_code"/>
+                <field name="supplier_id"/>
+                <field name="supplier_ref"/>
+                <field name="brand"/>
+                <field name="price_net"/>
+                <field name="price_unit"/>
+                <field name="price_per_ml" string="€/ml" widget="float" digits="[12,4]"/>
+                <field name="price_variation" string="Var %" optional="show"/>
+                <field name="availability" widget="badge"/>
+                <field name="datasheet_url" widget="url" string="Fiche" optional="show"/>
+                <field name="date_price"/>
+                <field name="is_best_price" column_invisible="1"/>
+                <field name="cable_master_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire -->
+    <record id="cable_supplier_price_view_form" model="ir.ui.view">
+        <field name="name">cable.supplier.price.form</field>
+        <field name="model">cable.supplier.price</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Meilleur prix"
+                            invisible="not is_best_price" bg_color="bg-success"/>
+                    <div class="oe_title">
+                        <label for="supplier_id"/>
+                        <h1><field name="supplier_id"/></h1>
+                    </div>
+                    <group>
+                        <group string="Câble maître">
+                            <field name="cable_master_id"/>
+                        </group>
+                        <group string="Identification fournisseur">
+                            <field name="supplier_ref"/>
+                            <field name="brand"/>
+                            <field name="ean"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Prix">
+                            <field name="price_gross"/>
+                            <field name="discount"/>
+                            <field name="price_net"/>
+                            <field name="price_unit"/>
+                            <field name="price_per_ml"/>
+                        </group>
+                        <group string="Variation">
+                            <field name="price_previous"/>
+                            <field name="price_variation"/>
+                            <field name="date_price"/>
+                            <field name="pricelist_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Disponibilité">
+                            <field name="availability"/>
+                            <field name="min_order_qty"/>
+                            <field name="lead_time_days"/>
+                        </group>
+                        <group string="Documentation">
+                            <field name="image_url" widget="url"/>
+                            <field name="datasheet_url" widget="url"/>
+                            <field name="dop_url" widget="url"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Recherche -->
+    <record id="cable_supplier_price_view_search" model="ir.ui.view">
+        <field name="name">cable.supplier.price.search</field>
+        <field name="model">cable.supplier.price</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="supplier_ref"/>
+                <field name="brand"/>
+                <field name="supplier_id"/>
+                <field name="cable_master_id"/>
+                <separator/>
+                <filter name="filter_best" string="Meilleur prix" 
+                        domain="[('is_best_price', '=', True)]"/>
+                <filter name="filter_available" string="Disponible" 
+                        domain="[('availability', '=', 'available')]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_supplier" string="Fournisseur" 
+                            context="{'group_by': 'supplier_id'}"/>
+                    <filter name="group_cable" string="Câble maître" 
+                            context="{'group_by': 'cable_master_id'}"/>
+                    <filter name="group_brand" string="Marque" 
+                            context="{'group_by': 'brand'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Pivot -->
+    <record id="cable_supplier_price_view_pivot" model="ir.ui.view">
+        <field name="name">cable.supplier.price.pivot</field>
+        <field name="model">cable.supplier.price</field>
+        <field name="arch" type="xml">
+            <pivot string="Comparaison prix">
+                <field name="cable_master_id" type="row"/>
+                <field name="supplier_id" type="col"/>
+                <field name="price_per_ml" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="cable_supplier_price_action" model="ir.actions.act_window">
+        <field name="name">Prix fournisseurs</field>
+        <field name="res_model">cable.supplier.price</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="context">{'search_default_group_supplier': 1}</field>
+    </record>
+</odoo>

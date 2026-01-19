@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Action types de cables -->
+    <record id="cable_type_action" model="ir.actions.act_window">
+        <field name="name">Types de cables</field>
+        <field name="res_model">cable.type</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Vue liste types -->
+    <record id="cable_type_view_list" model="ir.ui.view">
+        <field name="name">cable.type.list</field>
+        <field name="model">cable.type</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="conductor_material"/>
+                <field name="flexibility"/>
+                <field name="voltage_class"/>
+                <field name="norme"/>
+                <field name="master_product_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire types -->
+    <record id="cable_type_view_form" model="ir.ui.view">
+        <field name="name">cable.type.form</field>
+        <field name="model">cable.type</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="sequence"/>
+                            <field name="pattern_regex"/>
+                        </group>
+                        <group>
+                            <field name="conductor_material"/>
+                            <field name="insulation_type"/>
+                            <field name="flexibility"/>
+                            <field name="voltage_class"/>
+                            <field name="norme"/>
+                        </group>
+                    </group>
+                    <field name="description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Menu principal - avec action pour qu'il apparaisse -->
+    <menuitem id="menu_cable_comparator_root"
+              name="Comparateur Cables"
+              action="cable_product_master_action"
+              web_icon="cable_price_comparator,static/description/icon.png"
+              sequence="45"/>
+
+    <!-- Sous-menu Tarifs -->
+    <menuitem id="menu_cable_pricelists"
+              name="Tarifs"
+              parent="menu_cable_comparator_root"
+              sequence="10"/>
+
+    <menuitem id="menu_cable_pricelist_list"
+              name="Tous les tarifs"
+              parent="menu_cable_pricelists"
+              action="cable_pricelist_action"
+              sequence="10"/>
+
+    <menuitem id="menu_cable_pricelist_lines"
+              name="Articles"
+              parent="menu_cable_pricelists"
+              action="cable_pricelist_line_action"
+              sequence="20"/>
+
+    <!-- Sous-menu Comparaison -->
+    <menuitem id="menu_cable_comparison"
+              name="Comparaison"
+              parent="menu_cable_comparator_root"
+              sequence="20"/>
+
+    <menuitem id="menu_cable_master_products"
+              name="Produits maitres"
+              parent="menu_cable_comparison"
+              action="cable_product_master_action"
+              sequence="10"/>
+
+    <menuitem id="menu_cable_comparison_pivot"
+              name="Tableau comparatif"
+              parent="menu_cable_comparison"
+              action="cable_comparison_action"
+              sequence="20"/>
+
+    <!-- Sous-menu Import/Export -->
+    <menuitem id="menu_cable_import_export"
+              name="Import / Export"
+              parent="menu_cable_comparator_root"
+              sequence="30"/>
+
+    <menuitem id="menu_cable_import_wizard"
+              name="Importer un tarif (générique)"
+              parent="menu_cable_import_export"
+              action="cable_import_pricelist_wizard_action"
+              sequence="10"/>
+
+    <menuitem id="menu_cable_import_elen_wizard"
+              name="Importer tarif ELEN"
+              parent="menu_cable_import_export"
+              action="cable_import_elen_wizard_action"
+              sequence="15"/>
+
+    <menuitem id="menu_cable_export_wizard"
+              name="Exporter comparaison"
+              parent="menu_cable_import_export"
+              action="cable_export_comparison_wizard_action"
+              sequence="20"/>
+
+    <!-- Sous-menu Configuration -->
+    <menuitem id="menu_cable_config"
+              name="Configuration"
+              parent="menu_cable_comparator_root"
+              sequence="90"/>
+
+    <menuitem id="menu_cable_suppliers"
+              name="Fournisseurs"
+              parent="menu_cable_config"
+              action="cable_supplier_action"
+              sequence="10"/>
+
+    <menuitem id="menu_cable_types"
+              name="Types de cables"
+              parent="menu_cable_config"
+              action="cable_type_action"
+              sequence="20"/>
+
+    <!-- Action serveur pour initialiser les types -->
+    <record id="action_init_cable_types" model="ir.actions.server">
+        <field name="name">Initialiser types par défaut</field>
+        <field name="model_id" ref="model_cable_type"/>
+        <field name="binding_model_id" ref="model_cable_type"/>
+        <field name="state">code</field>
+        <field name="code">
+count = model.init_default_types()
+action = {
+    'type': 'ir.actions.client',
+    'tag': 'display_notification',
+    'params': {
+        'title': 'Initialisation',
+        'message': '%d nouveaux types de câbles créés' % count,
+        'type': 'success',
+        'sticky': False,
+    }
+}
+        </field>
+    </record>
+
+    <menuitem id="menu_init_cable_types"
+              name="Initialiser types par defaut"
+              parent="menu_cable_config"
+              action="action_init_cable_types"
+              sequence="25"/>
+</odoo>

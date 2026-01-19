@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue liste tarifs -->
+    <record id="cable_pricelist_view_list" model="ir.ui.view">
+        <field name="name">cable.pricelist.list</field>
+        <field name="model">cable.pricelist</field>
+        <field name="arch" type="xml">
+            <list decoration-info="state == 'draft'" 
+                  decoration-success="state == 'validated'"
+                  decoration-muted="state == 'archived'">
+                <field name="name"/>
+                <field name="supplier_id"/>
+                <field name="period_name"/>
+                <field name="date_validity"/>
+                <field name="line_count"/>
+                <field name="matched_count"/>
+                <field name="match_rate" widget="progressbar"/>
+                <field name="state" widget="badge" 
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'imported'"
+                       decoration-success="state in ('matched', 'validated')"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue formulaire tarif -->
+    <record id="cable_pricelist_view_form" model="ir.ui.view">
+        <field name="name">cable.pricelist.form</field>
+        <field name="model">cable.pricelist</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_run_matching" type="object" 
+                            string="🔗 Lancer Matching" class="btn-primary"
+                            invisible="state not in ('imported', 'matched')"/>
+                    <button name="action_validate" type="object" 
+                            string="✅ Valider" class="btn-success"
+                            invisible="state not in ('imported', 'matched')"/>
+                    <button name="action_archive" type="object" 
+                            string="📦 Archiver" 
+                            invisible="state != 'validated'"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="draft,imported,matched,validated"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_lines" type="object"
+                                class="oe_stat_button" icon="fa-list">
+                            <field name="line_count" widget="statinfo" string="Articles"/>
+                        </button>
+                        <button name="action_view_unmatched" type="object"
+                                class="oe_stat_button" icon="fa-question-circle">
+                            <field name="unmatched_count" widget="statinfo" string="Non correspondus"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="supplier_id"/>
+                            <field name="period_name"/>
+                            <field name="file_name"/>
+                            <field name="sheet_name"/>
+                        </group>
+                        <group>
+                            <field name="date_import"/>
+                            <field name="date_validity"/>
+                            <field name="date_validity_end"/>
+                            <field name="match_rate" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <group string="Statistiques prix">
+                        <group>
+                            <field name="price_min"/>
+                            <field name="price_avg"/>
+                        </group>
+                        <group>
+                            <field name="price_max"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Articles" name="lines">
+                            <field name="line_ids">
+                                <list limit="50">
+                                    <field name="reference"/>
+                                    <field name="designation"/>
+                                    <field name="family"/>
+                                    <field name="cable_type_code"/>
+                                    <field name="conductor_config"/>
+                                    <field name="section"/>
+                                    <field name="price_net"/>
+                                    <field name="price_per_km"/>
+                                    <field name="master_product_id"/>
+                                    <field name="match_score"/>
+                                    <field name="is_matched" widget="boolean"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action tarifs -->
+    <record id="cable_pricelist_action" model="ir.actions.act_window">
+        <field name="name">Tarifs</field>
+        <field name="res_model">cable.pricelist</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Importez votre premier tarif câbles
+            </p>
+            <p>
+                Utilisez le wizard d'import pour charger des fichiers Excel
+                de différents fournisseurs.
+            </p>
+        </field>
+    </record>
+</odoo>
