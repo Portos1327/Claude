@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Menu principal -->
+    <menuitem id="menu_price_finder_root"
+              name="Recherche Fournisseurs"
+              sequence="25"
+              web_icon="product_price_finder,static/description/icon.png"/>
+    
+    <!-- ACCÈS RAPIDE: Rechercher des fournisseurs (ouvre le wizard) -->
+    <menuitem id="menu_price_finder_search"
+              name="🔍 Rechercher des Fournisseurs"
+              parent="menu_price_finder_root"
+              action="action_search_prices_wizard"
+              sequence="1"/>
+    
+    <!-- Correspondances -->
+    <menuitem id="menu_price_finder_matches"
+              name="Correspondances"
+              parent="menu_price_finder_root"
+              action="action_price_match"
+              sequence="10"/>
+    
+    <!-- Configuration -->
+    <menuitem id="menu_price_finder_config"
+              name="Configuration"
+              parent="menu_price_finder_root"
+              sequence="100"/>
+    
+    <menuitem id="menu_price_finder_sources"
+              name="Sources de Prix"
+              parent="menu_price_finder_config"
+              action="action_price_source"
+              sequence="10"/>
+
+</odoo>

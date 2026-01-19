@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vue formulaire Price Source -->
+    <record id="view_price_source_form" model="ir.ui.view">
+        <field name="name">price.source.form</field>
+        <field name="model">price.source</field>
+        <field name="arch" type="xml">
+            <form string="Source de Prix">
+                <header>
+                    <button name="test_connection" type="object"
+                            string="🔗 Tester la connexion"
+                            class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_articles" type="object"
+                                class="oe_stat_button" icon="fa-list"
+                                invisible="not is_installed">
+                            <field name="article_count" widget="statinfo" string="Articles"/>
+                        </button>
+                        <button name="action_view_matches" type="object"
+                                class="oe_stat_button" icon="fa-link">
+                            <field name="match_count" widget="statinfo" string="Correspondances"/>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="Module non installé" bg_color="text-bg-warning"
+                            invisible="is_installed"/>
+                    <widget name="web_ribbon" title="Archivé" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom de la source..."/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Configuration">
+                            <field name="provider_type"/>
+                            <field name="model_name" readonly="1"
+                                   help="Rempli automatiquement selon le type"/>
+                            <field name="partner_id"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="is_installed" invisible="1"/>
+                        </group>
+                        <group string="Champs de correspondance (auto-détectés)">
+                            <field name="reference_field"/>
+                            <field name="brand_field"/>
+                            <field name="price_field"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Configuration avancée (optionnel)" groups="base.group_no_one">
+                        <group>
+                            <field name="price_base_field"/>
+                            <field name="discount_field"/>
+                        </group>
+                        <group>
+                            <field name="designation_field"/>
+                            <field name="unit_field"/>
+                            <field name="product_field"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Notes">
+                        <field name="notes" nolabel="1" placeholder="Notes..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste Price Source -->
+    <record id="view_price_source_list" model="ir.ui.view">
+        <field name="name">price.source.list</field>
+        <field name="model">price.source</field>
+        <field name="arch" type="xml">
+            <list string="Sources de Prix"
+                  decoration-warning="not is_installed"
+                  decoration-muted="not active">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="provider_type"/>
+                <field name="model_name"/>
+                <field name="partner_id"/>
+                <field name="article_count"/>
+                <field name="match_count"/>
+                <field name="is_installed"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action pour les sources de prix -->
+    <record id="action_price_source" model="ir.actions.act_window">
+        <field name="name">Sources de Prix</field>
+        <field name="res_model">price.source</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configurez vos sources de prix
+            </p>
+            <p>
+                Cliquez sur "Détection automatique" pour créer les sources
+                correspondant aux modules de tarifs installés (Rexel, VST, etc.)
+            </p>
+        </field>
+    </record>
+
+    <!-- Action serveur pour auto-détection -->
+    <record id="action_auto_detect_sources" model="ir.actions.server">
+        <field name="name">🔄 Détection automatique des sources</field>
+        <field name="model_id" ref="model_price_source"/>
+        <field name="binding_model_id" ref="model_price_source"/>
+        <field name="state">code</field>
+        <field name="code">
+action = model.auto_detect_and_create_sources()
+        </field>
+    </record>
+
+</odoo>

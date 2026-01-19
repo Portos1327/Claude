@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_price_source_user,price.source.user,model_price_source,base.group_user,1,0,0,0
+access_price_source_manager,price.source.manager,model_price_source,base.group_system,1,1,1,1
+access_price_match_user,price.match.user,model_price_match,base.group_user,1,1,1,0
+access_price_match_manager,price.match.manager,model_price_match,base.group_system,1,1,1,1
+access_search_prices_wizard,search.prices.wizard,model_search_prices_wizard,base.group_user,1,1,1,1
+access_search_prices_wizard_result,search.prices.wizard.result,model_search_prices_wizard_result,base.group_user,1,1,1,1

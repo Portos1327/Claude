@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ============================================================ -->
+    <!-- ONGLET "RECHERCHE DE FOURNISSEURS" dans le formulaire produit -->
+    <!-- ============================================================ -->
+    
+    <record id="product_product_form_view_supplier_search" model="ir.ui.view">
+        <field name="name">product.product.form.supplier.search</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <!-- Ajout après l'onglet Achats (purchase) -->
+            <xpath expr="//page[@name='purchase']" position="after">
+                <page string="Recherche de Fournisseurs" name="supplier_search">
+                    <group>
+                        <group string="Critères de recherche">
+                            <field name="manufacturer_ref" placeholder="Ex: 0 721 21"/>
+                            <field name="manufacturer_brand" placeholder="Ex: Legrand"/>
+                        </group>
+                        <group string="Résultats">
+                            <field name="price_match_count"/>
+                            <field name="best_price"/>
+                            <field name="best_price_source"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Boutons d'action -->
+                    <div class="mb-3">
+                        <button name="action_search_suppliers" type="object"
+                                string="🔍 Rechercher des fournisseurs"
+                                class="btn-primary me-2"/>
+                        <button name="action_apply_best_supplier" type="object"
+                                string="✓ Appliquer le meilleur prix"
+                                class="btn-success me-2"
+                                invisible="price_match_count == 0"/>
+                        <button name="action_apply_all_suppliers" type="object"
+                                string="📦 Ajouter tous les fournisseurs"
+                                class="btn-secondary"
+                                invisible="price_match_count == 0"/>
+                    </div>
+                    
+                    <!-- Liste des fournisseurs trouvés -->
+                    <field name="price_match_ids" invisible="price_match_count == 0">
+                        <list editable="bottom" create="0" delete="0"
+                              decoration-success="is_best_price"
+                              decoration-muted="state == 'rejected'"
+                              decoration-info="state == 'applied'">
+                            <field name="source_id" readonly="1"/>
+                            <field name="brand" readonly="1"/>
+                            <field name="reference" readonly="1"/>
+                            <field name="designation" readonly="1" optional="hide"/>
+                            <field name="price" readonly="1"/>
+                            <field name="is_best_price" readonly="1"/>
+                            <field name="state" readonly="1"/>
+                            <button name="action_apply_to_purchases" type="object"
+                                    string="Ajouter aux Achats" icon="fa-cart-plus"
+                                    invisible="state == 'applied'"/>
+                            <button name="action_view_source_article" type="object"
+                                    string="Voir article" icon="fa-external-link"/>
+                        </list>
+                    </field>
+                    
+                    <div class="text-muted" invisible="price_match_count > 0">
+                        <p>Aucun fournisseur trouvé. Renseignez la référence fabricant 
+                        et la marque, puis cliquez sur "Rechercher des fournisseurs".</p>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extension du formulaire product.template -->
+    <record id="product_template_form_view_supplier_search" model="ir.ui.view">
+        <field name="name">product.template.form.supplier.search</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='purchase']" position="after">
+                <page string="Recherche de Fournisseurs" name="supplier_search"
+                      invisible="product_variant_count > 1">
+                    <group>
+                        <group string="Critères de recherche">
+                            <field name="manufacturer_ref" placeholder="Ex: 0 721 21"/>
+                            <field name="manufacturer_brand" placeholder="Ex: Legrand"/>
+                        </group>
+                    </group>
+                    <div class="text-muted">
+                        <p>La recherche de fournisseurs est disponible 
+                        depuis la fiche de la variante du produit.</p>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extension de la vue liste product.product -->
+    <record id="product_product_tree_view_supplier_search" model="ir.ui.view">
+        <field name="name">product.product.list.supplier.search</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_code']" position="after">
+                <field name="manufacturer_ref" optional="hide" string="Réf. fabricant"/>
+                <field name="manufacturer_brand" optional="hide" string="Marque"/>
+                <field name="best_price" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Filtres de recherche -->
+    <record id="product_product_search_view_supplier_search" model="ir.ui.view">
+        <field name="name">product.product.search.supplier.search</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_search_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="manufacturer_ref" string="Réf. fabricant"/>
+                <field name="manufacturer_brand" string="Marque"/>
+            </xpath>
+            <xpath expr="//filter[1]" position="before">
+                <filter name="with_suppliers" string="Avec fournisseurs trouvés"
+                        domain="[('price_match_count', '>', 0)]"/>
+                <filter name="without_suppliers" string="Sans fournisseurs"
+                        domain="[('price_match_count', '=', 0)]"/>
+                <separator/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

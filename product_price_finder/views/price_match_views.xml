@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Vue formulaire Price Match -->
+    <record id="view_price_match_form" model="ir.ui.view">
+        <field name="name">price.match.form</field>
+        <field name="model">price.match</field>
+        <field name="arch" type="xml">
+            <form string="Correspondance Fournisseur">
+                <header>
+                    <button name="action_apply_to_purchases" type="object"
+                            string="📦 Ajouter à l'onglet Achats"
+                            class="btn-primary"
+                            invisible="state == 'applied'"/>
+                    <button name="action_update_price" type="object"
+                            string="🔄 Rafraîchir le prix"
+                            class="btn-secondary"/>
+                    <button name="action_reject" type="object"
+                            string="❌ Rejeter"
+                            class="btn-danger"
+                            invisible="state == 'rejected'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="found,selected,applied"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Produit Odoo">
+                            <field name="product_id"/>
+                            <field name="supplierinfo_id" readonly="1"/>
+                        </group>
+                        <group string="Source">
+                            <field name="source_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Article source">
+                            <field name="reference"/>
+                            <field name="designation"/>
+                            <field name="brand"/>
+                            <field name="unit"/>
+                        </group>
+                        <group string="Prix">
+                            <field name="price"/>
+                            <field name="price_base"/>
+                            <field name="discount"/>
+                            <field name="is_best_price"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Dates">
+                            <field name="found_date"/>
+                            <field name="last_update"/>
+                        </group>
+                        <group string="Technique" groups="base.group_no_one">
+                            <field name="article_model"/>
+                            <field name="article_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue liste Price Match -->
+    <record id="view_price_match_list" model="ir.ui.view">
+        <field name="name">price.match.list</field>
+        <field name="model">price.match</field>
+        <field name="arch" type="xml">
+            <list string="Correspondances Fournisseurs"
+                  decoration-success="is_best_price"
+                  decoration-muted="state == 'rejected'"
+                  decoration-info="state == 'applied'">
+                <field name="product_id"/>
+                <field name="source_id"/>
+                <field name="brand"/>
+                <field name="reference"/>
+                <field name="designation" optional="hide"/>
+                <field name="price"/>
+                <field name="is_best_price"/>
+                <field name="state"/>
+                <button name="action_apply_to_purchases" type="object"
+                        string="Ajouter" icon="fa-cart-plus"
+                        invisible="state == 'applied'"/>
+                <button name="action_view_source_article" type="object"
+                        string="Voir" icon="fa-external-link"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue recherche -->
+    <record id="view_price_match_search" model="ir.ui.view">
+        <field name="name">price.match.search</field>
+        <field name="model">price.match</field>
+        <field name="arch" type="xml">
+            <search string="Recherche">
+                <field name="product_id"/>
+                <field name="source_id"/>
+                <field name="reference"/>
+                <field name="brand"/>
+                <separator/>
+                <filter name="best_price" string="Meilleur prix"
+                        domain="[('is_best_price', '=', True)]"/>
+                <filter name="not_rejected" string="Non rejetés"
+                        domain="[('state', '!=', 'rejected')]"/>
+                <filter name="applied" string="Appliqués"
+                        domain="[('state', '=', 'applied')]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_product" string="Produit"
+                            context="{'group_by': 'product_id'}"/>
+                    <filter name="group_source" string="Source"
+                            context="{'group_by': 'source_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_price_match" model="ir.actions.act_window">
+        <field name="name">Correspondances Fournisseurs</field>
+        <field name="res_model">price.match</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_not_rejected': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune correspondance
+            </p>
+            <p>
+                Utilisez "Rechercher des Fournisseurs" pour trouver des prix 
+                dans vos modules de tarifs.
+            </p>
+        </field>
+    </record>
+
+</odoo>
