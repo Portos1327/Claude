@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_export_quickdevis_vst_wizard_form" model="ir.ui.view">
+        <field name="name">export.quickdevis.wizard.form</field>
+        <field name="model">export.quickdevis.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Exporter vers QuickDevis 7">
+                <sheet>
+                    <!-- Configuration -->
+                    <group invisible="state != 'draft'">
+                        <div class="alert alert-info" role="alert">
+                            <p><strong>📊 Export QuickDevis 7</strong></p>
+                            <p>Le fichier Excel contiendra :</p>
+                            <ul>
+                                <li><strong>Onglet "Articles VST"</strong> : Toutes les données articles</li>
+                                <li><strong>Onglet "Structure"</strong> : Arborescence Famille/Sous-famille pour QDV7</li>
+                            </ul>
+                        </div>
+                        
+                        <group string="Options d'export">
+                            <field name="export_all"/>
+                            <field name="include_deleted"/>
+                        </group>
+                        
+                        <group string="Sélection par famille" invisible="export_all">
+                            <field name="famille_ids" widget="many2many_tags" 
+                                   options="{'no_create': True}"
+                                   placeholder="Sélectionnez des familles..."/>
+                        </group>
+                        
+                        <group string="Articles sélectionnés" invisible="export_all or famille_ids">
+                            <field name="article_ids" widget="many2many_tags"
+                                   options="{'no_create': True}"
+                                   placeholder="Ou sélectionnez des articles spécifiques..."/>
+                        </group>
+                    </group>
+                    
+                    <!-- Résultats -->
+                    <group invisible="state != 'done'">
+                        <div class="alert alert-success" role="alert">
+                            <strong>✅ Export terminé !</strong>
+                        </div>
+                        <group string="Résultat">
+                            <field name="articles_exported"/>
+                            <field name="export_filename" invisible="1"/>
+                            <field name="export_file" filename="export_filename" string="Télécharger le fichier"/>
+                        </group>
+                    </group>
+                    
+                    <field name="state" invisible="1"/>
+                </sheet>
+                <footer>
+                    <button string="📥 Exporter" name="action_export" type="object" 
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button string="⬅ Retour" name="action_back" type="object" 
+                            class="btn-secondary" invisible="state != 'done'"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_export_quickdevis_vst_wizard" model="ir.actions.act_window">
+        <field name="name">Exporter vers QuickDevis 7</field>
+        <field name="res_model">export.quickdevis.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

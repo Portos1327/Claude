@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue Liste des Familles -->
+    <record id="view_vst_famille_list" model="ir.ui.view">
+        <field name="name">vst.famille.list</field>
+        <field name="model">vst.famille</field>
+        <field name="arch" type="xml">
+            <list string="Familles VST">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="complete_name"/>
+                <field name="level"/>
+                <field name="parent_id"/>
+                <field name="article_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Familles -->
+    <record id="view_vst_famille_form" model="ir.ui.view">
+        <field name="name">vst.famille.form</field>
+        <field name="model">vst.famille</field>
+        <field name="arch" type="xml">
+            <form string="Famille VST">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_articles" type="object" class="oe_stat_button" icon="fa-list">
+                            <field name="article_count" widget="statinfo" string="Articles"/>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Nom de la famille"/>
+                        </h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Informations">
+                            <field name="code"/>
+                            <field name="level"/>
+                            <field name="complete_name"/>
+                        </group>
+                        <group string="Hiérarchie">
+                            <field name="parent_id"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Sous-familles" name="children">
+                            <field name="child_ids" nolabel="1">
+                                <list>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="level"/>
+                                    <field name="article_count"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Articles" name="articles">
+                            <field name="article_ids" nolabel="1">
+                                <list>
+                                    <field name="code_article"/>
+                                    <field name="reference_fabricant"/>
+                                    <field name="designation"/>
+                                    <field name="nom_fabricant"/>
+                                    <field name="prix_achat_adherent"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Arborescence des Familles -->
+    <record id="view_vst_famille_tree" model="ir.ui.view">
+        <field name="name">vst.famille.tree</field>
+        <field name="model">vst.famille</field>
+        <field name="arch" type="xml">
+            <list string="Hiérarchie des familles" default_order="complete_name">
+                <field name="complete_name"/>
+                <field name="code"/>
+                <field name="level"/>
+                <field name="article_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Recherche des Familles -->
+    <record id="view_vst_famille_search" model="ir.ui.view">
+        <field name="name">vst.famille.search</field>
+        <field name="model">vst.famille</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher des familles">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="complete_name"/>
+                <separator/>
+                <filter string="Activités" name="activite" domain="[('level', '=', 'activite')]"/>
+                <filter string="Marques" name="marque" domain="[('level', '=', 'marque')]"/>
+                <filter string="Familles" name="famille" domain="[('level', '=', 'famille')]"/>
+                <filter string="Sous-familles" name="sous_famille" domain="[('level', '=', 'sous_famille')]"/>
+                <separator/>
+                <filter string="Racine" name="root" domain="[('parent_id', '=', False)]"/>
+                <group expand="0" string="Grouper par">
+                    <filter string="Niveau" name="group_level" context="{'group_by': 'level'}"/>
+                    <filter string="Parent" name="group_parent" context="{'group_by': 'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action principale des Familles -->
+    <record id="action_vst_famille" model="ir.actions.act_window">
+        <field name="name">Familles VST</field>
+        <field name="res_model">vst.famille</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_root': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune famille VST trouvée
+            </p>
+            <p>
+                Les familles sont créées automatiquement lors de l'import des articles.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action serveur: Reconstruire hiérarchie -->
+    <record id="action_server_rebuild_hierarchy" model="ir.actions.server">
+        <field name="name">🔄 Reconstruire la hiérarchie</field>
+        <field name="model_id" ref="model_vst_famille"/>
+        <field name="binding_model_id" ref="model_vst_famille"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+action = env['vst.famille'].action_rebuild_hierarchy()
+        </field>
+    </record>
+
+</odoo>

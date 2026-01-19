@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vst_article_user,vst.article.user,model_vst_article,base.group_user,1,1,1,1
+access_vst_famille_user,vst.famille.user,model_vst_famille,base.group_user,1,1,1,1
+access_vst_config_user,vst.config.user,model_vst_config,base.group_user,1,1,1,0
+access_vst_price_history_user,vst.price.history.user,model_vst_price_history,base.group_user,1,1,1,1
+access_import_vst_wizard_user,import.vst.wizard.user,model_import_vst_wizard,base.group_user,1,1,1,1
+access_export_naviwest_wizard_user,export.naviwest.wizard.user,model_export_naviwest_wizard,base.group_user,1,1,1,1
+access_export_quickdevis_wizard_user,export.quickdevis.wizard.user,model_export_quickdevis_wizard,base.group_user,1,1,1,1
+access_create_products_vst_wizard_user,create.products.vst.wizard.user,model_create_products_vst_wizard,base.group_user,1,1,1,1

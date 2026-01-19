@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Cron: Import mensuel automatique -->
+    <record id="ir_cron_vst_monthly_import" model="ir.cron">
+        <field name="name">VST: Import mensuel automatique</field>
+        <field name="model_id" ref="model_vst_config"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_auto_update()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="active">False</field>
+    </record>
+
+    <!-- Cron: Vérification des liens produits -->
+    <record id="ir_cron_vst_check_products" model="ir.cron">
+        <field name="name">VST: Vérification liens produits</field>
+        <field name="model_id" ref="model_vst_article"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_products()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+</odoo>

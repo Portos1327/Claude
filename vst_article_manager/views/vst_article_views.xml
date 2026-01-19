@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue Liste des Articles -->
+    <record id="view_vst_article_list" model="ir.ui.view">
+        <field name="name">vst.article.list</field>
+        <field name="model">vst.article</field>
+        <field name="arch" type="xml">
+            <list string="Articles VST" multi_edit="1">
+                <field name="code_article"/>
+                <field name="reference_fabricant"/>
+                <field name="designation"/>
+                <field name="nom_fabricant"/>
+                <field name="prix_achat_adherent" string="Prix Achat"/>
+                <field name="prix_public_ht" string="Prix Public"/>
+                <field name="remise" string="Remise %"/>
+                <field name="unite"/>
+                <field name="libelle_famille" optional="hide"/>
+                <field name="libelle_sous_famille" optional="hide"/>
+                <field name="product_id" optional="show"/>
+                <field name="is_deleted" optional="hide"/>
+                <field name="date_derniere_maj" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Articles -->
+    <record id="view_vst_article_form" model="ir.ui.view">
+        <field name="name">vst.article.form</field>
+        <field name="model">vst.article</field>
+        <field name="arch" type="xml">
+            <form string="Article VST">
+                <header>
+                    <button name="action_create_product" string="🏭 Créer Produit Odoo" 
+                            type="object" class="btn-primary"
+                            invisible="product_id"/>
+                    <button name="action_open_product" string="📦 Voir le Produit" 
+                            type="object" class="btn-secondary"
+                            invisible="not product_id"/>
+                    <button name="action_unlink_product" string="🔗 Dissocier" 
+                            type="object" class="btn-secondary"
+                            invisible="not product_id" confirm="Voulez-vous vraiment dissocier ce produit Odoo de l'article VST ?"/>
+                    <button name="action_view_price_history" string="📊 Historique des prix" 
+                            type="object" class="btn-secondary"/>
+                    <button name="action_restore_article" string="♻️ Restaurer" 
+                            type="object" class="btn-success"
+                            invisible="not is_deleted"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_price_history" type="object" class="oe_stat_button" icon="fa-line-chart">
+                            <field name="price_history_count" widget="statinfo" string="Historique"/>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="Supprimé du catalogue" bg_color="text-bg-danger" invisible="not is_deleted"/>
+                    
+                    <div class="oe_title">
+                        <label for="code_article"/>
+                        <h1>
+                            <field name="code_article" placeholder="Code Article"/>
+                        </h1>
+                        <field name="designation" placeholder="Désignation"/>
+                    </div>
+                    
+                    <group>
+                        <group string="Informations fabricant">
+                            <field name="reference_fabricant"/>
+                            <field name="code_fabricant"/>
+                            <field name="nom_fabricant"/>
+                        </group>
+                        <group string="Prix">
+                            <field name="prix_achat_adherent"/>
+                            <field name="prix_public_ht"/>
+                            <field name="prix_public_ttc"/>
+                            <field name="remise"/>
+                            <field name="ecotaxe_ht"/>
+                            <field name="ecotaxe_ttc"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Classification">
+                            <field name="famille_id"/>
+                            <field name="famille_code"/>
+                            <field name="nouvelle_famille_code"/>
+                            <field name="libelle_activite"/>
+                            <field name="libelle_marque"/>
+                            <field name="libelle_famille"/>
+                            <field name="libelle_sous_famille"/>
+                        </group>
+                        <group string="Informations complémentaires">
+                            <field name="source"/>
+                            <field name="type_article"/>
+                            <field name="unite"/>
+                            <field name="code_alpha"/>
+                            <field name="date_dernier_prix"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Produit Odoo">
+                            <field name="product_id"/>
+                        </group>
+                        <group string="Statut">
+                            <field name="active"/>
+                            <field name="is_deleted"/>
+                            <field name="date_suppression" invisible="not is_deleted"/>
+                            <field name="date_import"/>
+                            <field name="date_derniere_maj"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Historique des prix" name="price_history">
+                            <field name="price_history_ids" nolabel="1">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="type_prix"/>
+                                    <field name="prix_ancien"/>
+                                    <field name="prix_nouveau"/>
+                                    <field name="variation"/>
+                                    <field name="variation_absolue"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Recherche des Articles -->
+    <record id="view_vst_article_search" model="ir.ui.view">
+        <field name="name">vst.article.search</field>
+        <field name="model">vst.article</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher des articles">
+                <field name="code_article"/>
+                <field name="designation"/>
+                <field name="reference_fabricant"/>
+                <field name="nom_fabricant"/>
+                <field name="libelle_famille"/>
+                <field name="libelle_sous_famille"/>
+                <separator/>
+                <filter string="Avec produit Odoo" name="with_product" domain="[('product_id', '!=', False)]"/>
+                <filter string="Sans produit Odoo" name="without_product" domain="[('product_id', '=', False)]"/>
+                <separator/>
+                <filter string="Supprimés du catalogue" name="deleted" domain="[('is_deleted', '=', True)]"/>
+                <filter string="Actifs" name="active" domain="[('is_deleted', '=', False)]"/>
+                <separator/>
+                <filter string="Archivés" name="archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Grouper par">
+                    <filter string="Famille" name="group_famille" context="{'group_by': 'libelle_famille'}"/>
+                    <filter string="Sous-famille" name="group_sous_famille" context="{'group_by': 'libelle_sous_famille'}"/>
+                    <filter string="Fabricant" name="group_fabricant" context="{'group_by': 'nom_fabricant'}"/>
+                    <filter string="Marque" name="group_marque" context="{'group_by': 'libelle_marque'}"/>
+                    <filter string="Date de mise à jour" name="group_date_maj" context="{'group_by': 'date_derniere_maj:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action principale des Articles -->
+    <record id="action_vst_article" model="ir.actions.act_window">
+        <field name="name">Articles VST</field>
+        <field name="res_model">vst.article</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun article VST trouvé
+            </p>
+            <p>
+                Utilisez l'assistant d'import pour charger les articles depuis le fichier BATIGEST.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action serveur: Export Naviwest -->
+    <record id="action_server_export_naviwest_vst" model="ir.actions.server">
+        <field name="name">📤 Export vers Naviwest</field>
+        <field name="model_id" ref="model_vst_article"/>
+        <field name="binding_model_id" ref="model_vst_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Export Naviwest',
+    'res_model': 'export.naviwest.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'default_article_ids': records.ids},
+}
+        </field>
+    </record>
+    
+    <!-- Action serveur: Export QuickDevis -->
+    <record id="action_server_export_quickdevis_vst" model="ir.actions.server">
+        <field name="name">📤 Export vers QuickDevis</field>
+        <field name="model_id" ref="model_vst_article"/>
+        <field name="binding_model_id" ref="model_vst_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Export QuickDevis',
+    'res_model': 'export.quickdevis.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'default_article_ids': records.ids},
+}
+        </field>
+    </record>
+    
+    <!-- Action serveur: Créer produits Odoo -->
+    <record id="action_server_create_products_vst" model="ir.actions.server">
+        <field name="name">🏭 Créer produits Odoo</field>
+        <field name="model_id" ref="model_vst_article"/>
+        <field name="binding_model_id" ref="model_vst_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Créer produits Odoo',
+    'res_model': 'create.products.vst.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'default_article_ids': records.ids},
+}
+        </field>
+    </record>
+
+    <!-- Action serveur: Dissocier produits -->
+    <record id="action_server_unlink_products_vst" model="ir.actions.server">
+        <field name="name">🔗 Dissocier produits Odoo</field>
+        <field name="model_id" ref="model_vst_article"/>
+        <field name="binding_model_id" ref="model_vst_article"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+records.write({'product_id': False})
+action = {
+    'type': 'ir.actions.client',
+    'tag': 'display_notification',
+    'params': {
+        'title': 'Dissociation',
+        'message': '%d article(s) dissocié(s)' % len(records),
+        'type': 'success',
+        'sticky': False,
+    }
+}
+        </field>
+    </record>
+
+</odoo>

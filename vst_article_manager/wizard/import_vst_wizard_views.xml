@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_import_vst_wizard_form" model="ir.ui.view">
+        <field name="name">import.vst.wizard.form</field>
+        <field name="model">import.vst.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Importer les articles VST">
+                <sheet>
+                    <!-- État Brouillon -->
+                    <group invisible="state != 'draft'">
+                        <group string="Mode d'import">
+                            <field name="mode" widget="radio"/>
+                        </group>
+                        <group string="Options">
+                            <field name="update_existing"/>
+                            <field name="auto_create_product"/>
+                            <field name="create_price_history"/>
+                            <field name="detect_deleted"/>
+                            <field name="archive_deleted_products" invisible="not detect_deleted"/>
+                        </group>
+                    </group>
+                    
+                    <!-- État Import en cours -->
+                    <group invisible="state != 'importing'">
+                        <div class="alert alert-info text-center">
+                            <h3>⏳ Import en cours...</h3>
+                            <field name="progress" widget="progressbar"/>
+                        </div>
+                    </group>
+                    
+                    <!-- État Terminé -->
+                    <group invisible="state != 'done'">
+                        <div class="alert alert-success">
+                            <h3>✅ Import terminé avec succès</h3>
+                        </div>
+                        <group>
+                            <group string="Résultats">
+                                <field name="articles_created"/>
+                                <field name="articles_updated"/>
+                                <field name="articles_deleted"/>
+                                <field name="articles_total"/>
+                                <field name="errors_count"/>
+                            </group>
+                            <group string="Performances">
+                                <field name="duration" widget="float_time"/>
+                                <field name="speed"/>
+                            </group>
+                        </group>
+                        <group string="Log détaillé">
+                            <field name="log_message" nolabel="1" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <!-- État Erreur -->
+                    <group invisible="state != 'error'">
+                        <div class="alert alert-danger">
+                            <h3>❌ Erreur lors de l'import</h3>
+                        </div>
+                        <field name="log_message" nolabel="1" readonly="1"/>
+                    </group>
+                    
+                    <field name="state" invisible="1"/>
+                </sheet>
+                <footer>
+                    <button string="🚀 Lancer l'import" name="action_import" type="object" 
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button string="📋 Voir les articles" name="action_view_articles" type="object" 
+                            class="btn-secondary" invisible="state != 'done'"/>
+                    <button string="🗑️ Voir les supprimés" name="action_view_deleted_articles" type="object" 
+                            class="btn-secondary" invisible="state != 'done' or articles_deleted == 0"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_import_vst_wizard" model="ir.actions.act_window">
+        <field name="name">Importer les articles VST</field>
+        <field name="res_model">import.vst.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

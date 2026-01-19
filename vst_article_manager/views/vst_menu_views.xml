@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu Principal -->
+    <menuitem id="menu_vst_root"
+              name="VST Articles"
+              sequence="15"
+              web_icon="vst_article_manager,static/description/icon.png"/>
+
+    <!-- Sous-menu Articles -->
+    <menuitem id="menu_vst_articles"
+              name="Articles"
+              parent="menu_vst_root"
+              sequence="10"/>
+
+    <menuitem id="menu_vst_article_list"
+              name="📋 Tous les articles"
+              parent="menu_vst_articles"
+              action="action_vst_article"
+              sequence="10"/>
+
+    <menuitem id="menu_vst_famille_list"
+              name="🌳 Familles (Hiérarchie)"
+              parent="menu_vst_articles"
+              action="action_vst_famille"
+              sequence="20"/>
+
+    <!-- Sous-menu Import/Export -->
+    <menuitem id="menu_vst_import_export"
+              name="Import / Export"
+              parent="menu_vst_root"
+              sequence="20"/>
+
+    <menuitem id="menu_vst_import"
+              name="📥 Importer depuis BATIGEST"
+              parent="menu_vst_import_export"
+              action="action_import_vst_wizard"
+              sequence="10"/>
+
+    <menuitem id="menu_vst_export_naviwest"
+              name="📤 Exporter vers Naviwest"
+              parent="menu_vst_import_export"
+              action="action_export_naviwest_vst_wizard"
+              sequence="20"/>
+
+    <menuitem id="menu_vst_export_quickdevis"
+              name="📤 Exporter vers QuickDevis 7"
+              parent="menu_vst_import_export"
+              action="action_export_quickdevis_vst_wizard"
+              sequence="30"/>
+
+    <menuitem id="menu_vst_create_products"
+              name="🏭 Créer produits Odoo"
+              parent="menu_vst_import_export"
+              action="action_create_products_vst_wizard"
+              sequence="40"/>
+
+    <!-- Sous-menu Configuration -->
+    <menuitem id="menu_vst_config"
+              name="Configuration"
+              parent="menu_vst_root"
+              sequence="90"/>
+
+    <menuitem id="menu_vst_config_settings"
+              name="⚙️ Configuration VST"
+              parent="menu_vst_config"
+              action="action_vst_config_singleton"
+              sequence="10"/>
+
+</odoo>

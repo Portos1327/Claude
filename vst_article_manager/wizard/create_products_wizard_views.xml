@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_create_products_vst_wizard_form" model="ir.ui.view">
+        <field name="name">create.products.vst.wizard.form</field>
+        <field name="model">create.products.vst.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Créer les produits Odoo">
+                <sheet>
+                    <!-- Configuration -->
+                    <group invisible="state != 'draft'">
+                        <div class="alert alert-info" role="alert">
+                            <p><strong>🏭 Création de produits Odoo</strong></p>
+                            <p>Cette action va :</p>
+                            <ul>
+                                <li>Rechercher les produits existants par référence fabricant</li>
+                                <li>Créer les produits manquants</li>
+                                <li>Ajouter VST comme fournisseur avec les prix d'achat</li>
+                            </ul>
+                        </div>
+                        
+                        <group string="Mode">
+                            <field name="mode" widget="radio"/>
+                        </group>
+                        
+                        <group string="Options">
+                            <field name="skip_without_ref"/>
+                        </group>
+                        
+                        <group string="Articles sélectionnés" invisible="mode != 'selected'">
+                            <field name="article_ids" nolabel="1" readonly="1">
+                                <list>
+                                    <field name="code_article"/>
+                                    <field name="reference_fabricant"/>
+                                    <field name="designation"/>
+                                    <field name="product_id"/>
+                                </list>
+                            </field>
+                        </group>
+                    </group>
+                    
+                    <!-- Résultats -->
+                    <group invisible="state != 'done'">
+                        <div class="alert alert-success" role="alert">
+                            <strong>✅ Traitement terminé !</strong>
+                        </div>
+                        <group string="Résultats">
+                            <field name="products_created"/>
+                            <field name="products_linked"/>
+                            <field name="errors_count"/>
+                        </group>
+                        <group string="Log détaillé">
+                            <field name="log_message" nolabel="1" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <field name="state" invisible="1"/>
+                </sheet>
+                <footer>
+                    <button string="🚀 Créer les produits" name="action_create_products" type="object" 
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button string="⬅ Retour" name="action_back" type="object" 
+                            class="btn-secondary" invisible="state != 'done'"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_create_products_vst_wizard" model="ir.actions.act_window">
+        <field name="name">Créer les produits Odoo</field>
+        <field name="res_model">create.products.vst.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

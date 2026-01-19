@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_export_naviwest_vst_wizard_form" model="ir.ui.view">
+        <field name="name">export.naviwest.wizard.form</field>
+        <field name="model">export.naviwest.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Exporter vers Naviwest">
+                <sheet>
+                    <group>
+                        <group string="Type d'export">
+                            <field name="export_type" widget="radio"/>
+                        </group>
+                        <group string="Filtres (optionnel)">
+                            <field name="filter_field"/>
+                            <field name="filter_value" invisible="not filter_field" 
+                                   placeholder="Ex: CABLE, LEGRAND..."/>
+                        </group>
+                    </group>
+                    
+                    <group string="Articles sélectionnés" invisible="not article_ids">
+                        <field name="article_ids" nolabel="1" readonly="1">
+                            <list>
+                                <field name="code_article"/>
+                                <field name="reference_fabricant"/>
+                                <field name="designation"/>
+                                <field name="nom_fabricant"/>
+                            </list>
+                        </field>
+                    </group>
+                    
+                    <group invisible="not export_file" string="Fichier généré">
+                        <field name="export_file" filename="export_filename"/>
+                        <field name="export_filename" invisible="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="📤 Exporter" name="action_export" type="object" 
+                            class="btn-primary" invisible="export_file"/>
+                    <button string="⬇️ Télécharger" name="action_download" type="object" 
+                            class="btn-success" invisible="not export_file"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_export_naviwest_vst_wizard" model="ir.actions.act_window">
+        <field name="name">Exporter vers Naviwest</field>
+        <field name="res_model">export.naviwest.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>
