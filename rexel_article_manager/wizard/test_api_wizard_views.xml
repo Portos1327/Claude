@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Test API Form View -->
+    <record id="view_test_api_wizard_form" model="ir.ui.view">
+        <field name="name">test.api.wizard.form</field>
+        <field name="model">test.api.wizard</field>
+        <field name="arch" type="xml">
+            <form string="🔍 Test API Rexel">
+                <!-- CONFIGURATION -->
+                <group invisible="state != 'draft'">
+                    <div class="alert alert-info" role="alert">
+                        <p><strong>🔍 Test API Rexel - Données brutes</strong></p>
+                        <p>Saisissez le trigramme fabricant et la référence pour voir les données retournées par l'API.</p>
+                        <p><em>Exemple: LEG + 600391A pour un produit Legrand</em></p>
+                    </div>
+                    
+                    <group string="Référence à tester">
+                        <field name="trigramme" placeholder="Ex: LEG, SCH, BE4"/>
+                        <field name="reference_fabricant" placeholder="Ex: 600391A, 13201"/>
+                    </group>
+                    
+                    <group string="📦 APIs Pack Découverte">
+                        <field name="test_prices"/>
+                        <field name="test_units"/>
+                        <field name="test_stocks"/>
+                    </group>
+                    
+                    <group string="⭐ APIs Pack Premium">
+                        <field name="test_images"/>
+                        <field name="test_fiches"/>
+                        <field name="test_cee"/>
+                        <field name="test_env"/>
+                        <field name="test_replacement"/>
+                    </group>
+                </group>
+                
+                <!-- RÉSULTATS -->
+                <group invisible="state != 'done'">
+                    <div class="alert alert-success" role="alert">
+                        <strong>✓ Test terminé</strong>
+                    </div>
+                    
+                    <!-- Résultat du calcul d'unité -->
+                    <group string="📐 Calcul de l'unité" invisible="not result_unite_calculee">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h4>Unité calculée: <span class="badge bg-primary" style="font-size: 1.2em;"><field name="result_unite_calculee" nolabel="1"/></span></h4>
+                            </div>
+                        </div>
+                        <field name="result_unite_explication" nolabel="1" readonly="1" 
+                               widget="text" style="font-family: monospace; white-space: pre; background: #f5f5f5; padding: 10px;"/>
+                    </group>
+                    
+                    <!-- Pack Découverte -->
+                    <group string="💰 API Prix" invisible="not result_prices">
+                        <field name="result_prices" nolabel="1" readonly="1" 
+                               widget="text" style="font-family: monospace; white-space: pre; background: #f5f5f5; padding: 10px; max-height: 300px; overflow-y: auto;"/>
+                    </group>
+                    
+                    <group string="📦 API Unités" invisible="not result_units">
+                        <field name="result_units" nolabel="1" readonly="1" 
+                               widget="text" style="font-family: monospace; white-space: pre; background: #f5f5f5; padding: 10px; max-height: 300px; overflow-y: auto;"/>
+                    </group>
+                    
+                    <group string="📊 API Stocks" invisible="not result_stocks">
+                        <field name="result_stocks" nolabel="1" readonly="1" 
+                               widget="text" style="font-family: monospace; white-space: pre; background: #f5f5f5; padding: 10px; max-height: 300px; overflow-y: auto;"/>
+                    </group>
+                    
+                    <!-- Pack Premium -->
+                    <group string="🖼️ API Images" invisible="not result_images">
+                        <field name="result_images" nolabel="1" readonly="1" 
+                               widget="text" style="font-family: monospace; white-space: pre; background: #fff3cd; padding: 10px; max-height: 300px; overflow-y: auto;"/>
+                    </group>
+                    
+                    <group string="📄 API Fiches techniques" invisible="not result_fiches">
+                        <field name="result_fiches" nolabel="1" readonly="1" 
+                               widget="text" style="font-family: monospace; white-space: pre; background: #fff3cd; padding: 10px; max-height: 300px; overflow-y: auto;"/>
+                    </group>
+                    
+                    <group string="🌿 API CEE" invisible="not result_cee">
+                        <field name="result_cee" nolabel="1" readonly="1" 
+                               widget="text" style="font-family: monospace; white-space: pre; background: #fff3cd; padding: 10px; max-height: 300px; overflow-y: auto;"/>
+                    </group>
+                    
+                    <group string="♻️ API Environnement" invisible="not result_env">
+                        <field name="result_env" nolabel="1" readonly="1" 
+                               widget="text" style="font-family: monospace; white-space: pre; background: #fff3cd; padding: 10px; max-height: 300px; overflow-y: auto;"/>
+                    </group>
+                    
+                    <group string="🔄 API Remplacements" invisible="not result_replacement">
+                        <field name="result_replacement" nolabel="1" readonly="1" 
+                               widget="text" style="font-family: monospace; white-space: pre; background: #fff3cd; padding: 10px; max-height: 300px; overflow-y: auto;"/>
+                    </group>
+                </group>
+                
+                <field name="state" invisible="1"/>
+                
+                <footer>
+                    <button string="🔍 Tester" name="action_test_api" type="object" 
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button string="⬅ Nouveau test" name="action_back" type="object" 
+                            class="btn-secondary" invisible="state != 'done'"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour ouvrir le wizard -->
+    <record id="action_test_api_wizard" model="ir.actions.act_window">
+        <field name="name">🔍 Test API (données brutes)</field>
+        <field name="res_model">test.api.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

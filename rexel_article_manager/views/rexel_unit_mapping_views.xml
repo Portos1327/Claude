@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================ -->
+    <!-- CORRESPONDANCES CONDITIONNEMENT → UNITÉ     -->
+    <!-- ============================================ -->
+    
+    <!-- Vue Liste des correspondances -->
+    <record id="view_rexel_unit_mapping_tree" model="ir.ui.view">
+        <field name="name">rexel.unit.mapping.tree</field>
+        <field name="model">rexel.unit.mapping</field>
+        <field name="arch" type="xml">
+            <list string="Correspondances Conditionnement → Unité" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="conditionnement"/>
+                <field name="unite"/>
+                <field name="description"/>
+                <field name="usage_count" readonly="1"/>
+                <field name="is_system" readonly="1"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des correspondances -->
+    <record id="view_rexel_unit_mapping_form" model="ir.ui.view">
+        <field name="name">rexel.unit.mapping.form</field>
+        <field name="model">rexel.unit.mapping</field>
+        <field name="arch" type="xml">
+            <form string="Correspondance Unité">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="conditionnement" placeholder="Ex: TOU, MET, COU"/>
+                            <field name="unite"/>
+                        </group>
+                        <group>
+                            <field name="description" placeholder="Description optionnelle"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="usage_count" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="is_system" readonly="1"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour les correspondances -->
+    <record id="action_rexel_unit_mapping" model="ir.actions.act_window">
+        <field name="name">📋 Correspondances Conditionnement → Unité</field>
+        <field name="res_model">rexel.unit.mapping</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Créez une correspondance conditionnement → unité
+            </p>
+            <p>
+                Ces correspondances permettent de convertir automatiquement 
+                les codes conditionnement (TOU, MET, PIE, etc.) en unités de mesure (U ou ML).
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- CONDITIONNEMENTS INCONNUS                   -->
+    <!-- ============================================ -->
+    
+    <!-- Vue Liste des conditionnements inconnus -->
+    <record id="view_rexel_unknown_conditionnement_tree" model="ir.ui.view">
+        <field name="name">rexel.unknown.conditionnement.tree</field>
+        <field name="model">rexel.unknown.conditionnement</field>
+        <field name="arch" type="xml">
+            <list string="Conditionnements inconnus" decoration-success="is_resolved" decoration-warning="not is_resolved">
+                <field name="conditionnement"/>
+                <field name="occurrence_count"/>
+                <field name="last_seen"/>
+                <field name="example_references"/>
+                <field name="suggested_unite"/>
+                <field name="is_resolved"/>
+                <button name="action_create_mapping" type="object" 
+                        string="Créer correspondance" icon="fa-plus"
+                        invisible="is_resolved or not suggested_unite"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des conditionnements inconnus -->
+    <record id="view_rexel_unknown_conditionnement_form" model="ir.ui.view">
+        <field name="name">rexel.unknown.conditionnement.form</field>
+        <field name="model">rexel.unknown.conditionnement</field>
+        <field name="arch" type="xml">
+            <form string="Conditionnement inconnu">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="conditionnement" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Statistiques">
+                            <field name="occurrence_count" readonly="1"/>
+                            <field name="first_seen" readonly="1"/>
+                            <field name="last_seen" readonly="1"/>
+                        </group>
+                        <group string="Résolution">
+                            <field name="suggested_unite" required="not is_resolved"/>
+                            <field name="is_resolved"/>
+                        </group>
+                    </group>
+                    <group string="Exemples de références">
+                        <field name="example_references" nolabel="1" readonly="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_create_mapping" type="object" 
+                            string="✓ Créer la correspondance" class="btn-primary"
+                            invisible="is_resolved"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour les conditionnements inconnus -->
+    <record id="action_rexel_unknown_conditionnement" model="ir.actions.act_window">
+        <field name="name">⚠️ Conditionnements inconnus</field>
+        <field name="res_model">rexel.unknown.conditionnement</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_resolved', '=', False)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun conditionnement inconnu
+            </p>
+            <p>
+                Les conditionnements inconnus rencontrés lors des mises à jour 
+                apparaîtront ici. Vous pourrez alors créer les correspondances appropriées.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action serveur pour initialiser les correspondances par défaut -->
+    <record id="action_init_default_mappings" model="ir.actions.server">
+        <field name="name">🔄 Initialiser correspondances par défaut</field>
+        <field name="model_id" ref="model_rexel_unit_mapping"/>
+        <field name="state">code</field>
+        <field name="code">
+records = env['rexel.unit.mapping'].init_default_mappings()
+action = {
+    'type': 'ir.actions.client',
+    'tag': 'display_notification',
+    'params': {
+        'title': 'Correspondances initialisées',
+        'message': f'{records} correspondances créées',
+        'type': 'success',
+    }
+}
+        </field>
+    </record>
+
+</odoo>

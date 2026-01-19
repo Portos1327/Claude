@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue Formulaire du Wizard de création de produits -->
+    <record id="view_create_products_wizard_form" model="ir.ui.view">
+        <field name="name">create.products.wizard.form</field>
+        <field name="model">create.products.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Créer des produits Odoo">
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        <h4>📦 Création de produits Odoo</h4>
+                        <p>Cette action va créer des produits dans le module Ventes/Inventaire d'Odoo à partir de vos articles Rexel.</p>
+                        <p>Les produits créés seront utilisables pour :</p>
+                        <ul>
+                            <li>Les devis et commandes clients</li>
+                            <li>La gestion des stocks</li>
+                            <li>Les achats fournisseurs</li>
+                        </ul>
+                    </div>
+                    
+                    <group>
+                        <group string="Mode">
+                            <field name="mode" widget="radio"/>
+                        </group>
+                        <group string="Statistiques">
+                            <field name="total_articles" readonly="1"/>
+                            <field name="articles_with_product" readonly="1"/>
+                            <field name="articles_without_product" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="Filtres (optionnel)">
+                            <field name="filter_by_family"/>
+                            <field name="family_filter" invisible="not filter_by_family" placeholder="Ex: CABLE"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Articles sélectionnés" invisible="products_created > 0 or products_updated > 0">
+                        <field name="article_ids" nolabel="1" readonly="1">
+                            <list>
+                                <field name="reference_fabricant"/>
+                                <field name="designation"/>
+                                <field name="famille_libelle"/>
+                                <field name="product_id" string="Produit"/>
+                                <field name="is_product_created" string="Créé" widget="boolean"/>
+                            </list>
+                        </field>
+                    </group>
+                    
+                    <group string="Résultats" invisible="products_created == 0 and products_updated == 0 and errors == 0">
+                        <group>
+                            <field name="products_created" readonly="1"/>
+                            <field name="products_updated" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="errors" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook invisible="not log_message">
+                        <page string="Log détaillé">
+                            <field name="log_message" nolabel="1" widget="text"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Créer les produits" 
+                            name="action_create_products" 
+                            type="object" 
+                            class="btn-primary" 
+                            invisible="products_created > 0 or products_updated > 0"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour le wizard -->
+    <record id="action_create_products_wizard" model="ir.actions.act_window">
+        <field name="name">Créer des produits Odoo</field>
+        <field name="res_model">create.products.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_rexel_article"/>
+    </record>
+
+</odoo>

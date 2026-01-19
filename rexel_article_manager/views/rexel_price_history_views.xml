@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vue Liste de l'historique des prix -->
+    <record id="view_rexel_price_history_tree" model="ir.ui.view">
+        <field name="name">rexel.price.history.tree</field>
+        <field name="model">rexel.price.history</field>
+        <field name="arch" type="xml">
+            <list string="Historique des prix" create="false" edit="false">
+                <field name="date" string="Date"/>
+                <field name="reference" string="Référence"/>
+                <field name="designation" string="Désignation"/>
+                <field name="prix_base" string="Prix base"/>
+                <field name="prix_net" string="Prix net"/>
+                <field name="remise" string="Remise (%)"/>
+                <field name="source" string="Source"/>
+                <field name="user_id" string="Utilisateur"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire de l'historique des prix -->
+    <record id="view_rexel_price_history_form" model="ir.ui.view">
+        <field name="name">rexel.price.history.form</field>
+        <field name="model">rexel.price.history</field>
+        <field name="arch" type="xml">
+            <form string="Entrée historique prix" create="false" edit="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="article_id"/>
+                            <field name="reference"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="prix_base"/>
+                            <field name="prix_net"/>
+                            <field name="remise"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="source"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="notes"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vue Graphique de l'historique des prix -->
+    <record id="view_rexel_price_history_graph" model="ir.ui.view">
+        <field name="name">rexel.price.history.graph</field>
+        <field name="model">rexel.price.history</field>
+        <field name="arch" type="xml">
+            <graph string="Évolution des prix" type="line">
+                <field name="date" interval="day"/>
+                <field name="prix_net" type="measure"/>
+                <field name="prix_base" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vue Recherche de l'historique des prix -->
+    <record id="view_rexel_price_history_search" model="ir.ui.view">
+        <field name="name">rexel.price.history.search</field>
+        <field name="model">rexel.price.history</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher historique prix">
+                <field name="reference" string="Référence" filter_domain="['|', ('reference', 'ilike', self), ('designation', 'ilike', self)]"/>
+                <field name="article_id"/>
+                <field name="date"/>
+                
+                <filter string="Aujourd'hui" name="today" domain="[('date', '&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Cette semaine" name="this_week" domain="[('date', '&gt;=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter string="Ce mois" name="this_month" domain="[('date', '&gt;=', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
+                
+                <separator/>
+                <filter string="Import Esabora" name="source_import" domain="[('source', '=', 'import')]"/>
+                <filter string="Mise à jour Rexel" name="source_rexel" domain="[('source', '=', 'rexel_api')]"/>
+                <filter string="Manuel" name="source_manual" domain="[('source', '=', 'manual')]"/>
+                
+                <group expand="0" string="Grouper par">
+                    <filter string="Article" name="group_article" context="{'group_by': 'article_id'}"/>
+                    <filter string="Source" name="group_source" context="{'group_by': 'source'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action pour l'historique des prix -->
+    <record id="action_rexel_price_history" model="ir.actions.act_window">
+        <field name="name">Historique des prix</field>
+        <field name="res_model">rexel.price.history</field>
+        <field name="view_mode">list,form,graph</field>
+        <field name="context">{'search_default_this_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun historique de prix
+            </p>
+            <p>
+                L'historique des prix se remplit automatiquement lors des imports et mises à jour.
+            </p>
+        </field>
+    </record>
+
+</odoo>
