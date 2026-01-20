@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crm_lead_view_form_quickdevis" model="ir.ui.view">
+        <field name="name">crm.lead.form.quickdevis</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="QuickDevis" name="quickdevis">
+                    <group string="Informations Opportunite">
+                        <group>
+                            <field name="qdv_opportunityname"/>
+                            <field name="qdv_customerreferencenumber"/>
+                            <field name="qdv_lotnumber"/>
+                        </group>
+                        <group>
+                            <field name="qdv_workstartdate"/>
+                            <field name="qdv_workenddate"/>
+                            <field name="qdv_currencyisocode"/>
+                        </group>
+                    </group>
+                    <group string="Contact Principal">
+                        <group>
+                            <field name="qdv_primarycontactlastname"/>
+                            <field name="qdv_primarycontactemail"/>
+                            <field name="qdv_primarycontactmobilephone"/>
+                        </group>
+                        <group>
+                            <field name="qdv_primarycontactstreet"/>
+                            <field name="qdv_primarycontactcity"/>
+                            <field name="qdv_primarycontactpostalcode"/>
+                        </group>
+                    </group>
+                    <group string="Organisation">
+                        <group>
+                            <field name="qdv_orgagencyname"/>
+                            <field name="qdv_orgcity"/>
+                        </group>
+                        <group>
+                            <field name="qdv_orgphonenumber"/>
+                            <field name="qdv_orgpostalcode"/>
+                        </group>
+                    </group>
+                    <group string="Resultats QuickDevis">
+                        <group>
+                            <field name="qdv_sys_filepath" readonly="1"/>
+                            <field name="qdv_sys_filename" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="qdv_sys_version_num" readonly="1"/>
+                            <field name="qdv_vat" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
