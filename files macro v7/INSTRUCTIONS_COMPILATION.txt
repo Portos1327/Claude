@@ -1,0 +1,89 @@
+═══════════════════════════════════════════════════════════════════════════
+              🎯 COMPILATION DLL - INSTRUCTIONS RAPIDES
+═══════════════════════════════════════════════════════════════════════════
+
+📦 FICHIER À UTILISER : Package_Compilation_DLL_Odoo_V2.zip (98 KB)
+
+✅ Script mis à jour avec votre chemin QuickDevis : C:\Program Files\QDV 7
+
+═══════════════════════════════════════════════════════════════════════════
+
+⚡ PROCÉDURE (5 MINUTES)
+
+1. Extraire Package_Compilation_DLL_Odoo_V2.zip
+   → Vous obtenez le dossier : compilation_package\
+
+2. Ouvrir le dossier : compilation_package\
+
+3. Double-cliquer sur : COMPILER_DLL_ODOO.bat
+
+4. Le script va :
+   ✅ Trouver QuickDevis (C:\Program Files\QDV 7)
+   ✅ Trouver le compilateur VB.NET
+   ✅ Compiler la DLL Odoo
+   ✅ Créer Communication_With_SalesForce.qdvmacro
+
+5. Copier Communication_With_SalesForce.qdvmacro
+   Vers : C:\ProgramData\Est360\QuickDevis 7\Macros\
+
+6. Redémarrer QuickDevis
+
+7. Tester avec une opportunité Odoo ✅
+
+═══════════════════════════════════════════════════════════════════════════
+
+🔧 SI LE SCRIPT NE TROUVE PAS QUICKDEVIS
+
+Le script cherche automatiquement dans :
+✓ C:\Program Files\QDV 7                    ← VOTRE EMPLACEMENT
+✓ C:\Program Files\QDV 7 ULT
+✓ C:\Program Files (x86)\QDV 7
+✓ C:\Program Files (x86)\QDV 7 ULT
+✓ C:\Program Files\Est360\QuickDevis 7
+✓ C:\Program Files (x86)\Est360\QuickDevis 7
+
+Si QuickDevis n'est pas trouvé :
+→ Le script vous demandera d'entrer le chemin manuellement
+→ Entrez : C:\Program Files\QDV 7
+
+═══════════════════════════════════════════════════════════════════════════
+
+✅ APRÈS LA COMPILATION
+
+Vous obtiendrez :
+- MACROC61945A7645743AF8DCB0CF1E0B7905B.dll (30-50 KB)
+- Communication_With_SalesForce.qdvmacro (100-120 KB)
+
+Cette macro :
+❌ Ne pointe PLUS vers Salesforce
+✅ Pointe vers Odoo (localhost:8069)
+✅ Base : Turquand_QDV
+✅ Identifiants configurés
+✅ 111 champs mappés
+
+═══════════════════════════════════════════════════════════════════════════
+
+🎯 TEST FINAL
+
+1. QuickDevis → Ouvrir un devis
+2. Lancer macro "Communication With SalesForce"
+3. Vous ne devez PLUS voir Salesforce
+4. Entrer un numéro d'opportunité Odoo
+5. Les champs se remplissent ✅
+
+═══════════════════════════════════════════════════════════════════════════
+
+📚 DOCUMENTATION
+
+Package_Compilation_DLL_Odoo_V2.zip - Package complet
+GUIDE_COMPILATION_DLL.md           - Guide détaillé
+COMPILATION_README.txt             - Résumé
+
+═══════════════════════════════════════════════════════════════════════════
+
+Version : V2 (chemin QDV 7 ajouté)
+Date    : 2025-12-04
+Taille  : 98 KB
+Statut  : ✅ Prêt à compiler
+
+═══════════════════════════════════════════════════════════════════════════

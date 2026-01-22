@@ -1,0 +1,68 @@
+═══════════════════════════════════════════════════════════════════════════
+            ⚡ MACRO ODOO - INSTALLATION RAPIDE (2 MIN)
+═══════════════════════════════════════════════════════════════════════════
+
+📦 FICHIER : Communication_With_SalesForce_SansDLL.qdvmacro (94 KB)
+
+✅ PAS DE COMPILATION NÉCESSAIRE
+✅ PAS DE LICENCE DÉVELOPPEUR NÉCESSAIRE  
+✅ FONCTIONNE IMMÉDIATEMENT
+
+═══════════════════════════════════════════════════════════════════════════
+
+⚡ INSTALLATION (4 ÉTAPES)
+
+1. Télécharger : Communication_With_SalesForce_SansDLL.qdvmacro
+
+2. Copier vers : C:\ProgramData\Est360\QuickDevis 7\Macros\
+
+3. Renommer en : Communication_With_SalesForce.qdvmacro
+   (Supprimer "_SansDLL" du nom)
+
+4. Redémarrer QuickDevis
+
+═══════════════════════════════════════════════════════════════════════════
+
+🧪 TEST
+
+1. QuickDevis → Ouvrir un devis
+2. Lancer macro "Communication With SalesForce"
+3. Vous ne voyez PLUS Salesforce ✅
+4. Entrer un numéro d'opportunité Odoo
+5. Les champs se remplissent ✅
+
+═══════════════════════════════════════════════════════════════════════════
+
+✅ AVANTAGES
+
+✓ Installation en 2 minutes
+✓ Pas de compilation
+✓ Pas de licence développeur
+✓ Code modifiable si besoin
+✓ Fonctionne immédiatement
+✓ 111 champs synchronisés
+
+═══════════════════════════════════════════════════════════════════════════
+
+📚 DOCUMENTATION
+
+MACRO_SANS_DLL_GUIDE.md - Guide complet
+
+═══════════════════════════════════════════════════════════════════════════
+
+🎯 RÉSULTAT
+
+❌ Plus de Salesforce
+✅ Connexion à Odoo (localhost:8069)
+✅ Base : Turquand_QDV
+✅ 50 champs Odoo → QuickDevis
+✅ 58 champs QuickDevis → Odoo
+
+═══════════════════════════════════════════════════════════════════════════
+
+Version : Sans DLL (Option C)
+Date    : 2025-12-05
+Taille  : 94 KB
+Status  : ✅ Prêt à installer
+
+═══════════════════════════════════════════════════════════════════════════

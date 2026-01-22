@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>
+    </SchemaVersion>
+    <ProjectGuid>{1AEF15A5-1BB6-4AA4-BA92-C19FEDAAF87E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>
+    </RootNamespace>
+    <AssemblyName>Communication_With_SalesForce</AssemblyName>
+    <QdvMacroId>#NORMAL#MACROC61945A7645743AF8DCB0CF1E0B7905B</QdvMacroId>
+    <FileAlignment>512</FileAlignment>
+    <MyType>Windows</MyType>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DocumentationFile>Communication_With_SalesForce.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DocumentationFile>Communication_With_SalesForce.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DocumentationFile>Communication_With_SalesForce.xml</DocumentationFile>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DocumentationFile>Communication_With_SalesForce.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionExplicit>On</OptionExplicit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionCompare>Binary</OptionCompare>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionStrict>Off</OptionStrict>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OptionInfer>On</OptionInfer>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ChilkatDotNet48">
+      <HintPath>C:\Program Files\QDV 7 ULT\ChilkatDotNet48.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Data.v19.2">
+      <HintPath>C:\Program Files\QDV 7 ULT\DevExpress.Data.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Printing.v19.2.Core">
+      <HintPath>C:\Program Files\QDV 7 ULT\DevExpress.Printing.v19.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Sparkline.v19.2.Core">
+      <HintPath>C:\Program Files\QDV 7 ULT\DevExpress.Sparkline.v19.2.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Utils.v19.2">
+      <HintPath>C:\Program Files\QDV 7 ULT\DevExpress.Utils.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.XtraEditors.v19.2">
+      <HintPath>C:\Program Files\QDV 7 ULT\DevExpress.XtraEditors.v19.2.dll</HintPath>
+    </Reference>
+    <Reference Include="GemBox.Document">
+      <HintPath>C:\Program Files\QDV 7 ULT\GemBox.Document.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic">
+      <HintPath>C:\Program Files\QDV 7 ULT\Microsoft.VisualBasic.dll</HintPath>
+    </Reference>
+    <Reference Include="Qdv.CommonApi">
+      <HintPath>C:\Program Files\QDV 7 ULT\Qdv.CommonApi.dll</HintPath>
+    </Reference>
+    <Reference Include="Qdv.UserApi">
+      <HintPath>C:\Program Files\QDV 7 ULT\Qdv.UserApi.dll</HintPath>
+    </Reference>
+    <Reference Include="SpreadsheetGear2017.Core">
+      <HintPath>C:\Program Files\QDV 7 ULT\SpreadsheetGear2017.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SpreadsheetGear2017.Drawing">
+      <HintPath>C:\Program Files\QDV 7 ULT\SpreadsheetGear2017.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="SpreadsheetGear2017.Windows.Forms">
+      <HintPath>C:\Program Files\QDV 7 ULT\SpreadsheetGear2017.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="SpreadsheetGear2017.Windows.Forms.Integration">
+      <HintPath>C:\Program Files\QDV 7 ULT\SpreadsheetGear2017.Windows.Forms.Integration.dll</HintPath>
+    </Reference>
+    <Reference Include="system">
+      <HintPath>C:\Program Files\QDV 7 ULT\system.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations">
+      <HintPath>C:\Program Files\QDV 7 ULT\System.ComponentModel.DataAnnotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <HintPath>C:\Program Files\QDV 7 ULT\System.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="system.data">
+      <HintPath>C:\Program Files\QDV 7 ULT\system.data.dll</HintPath>
+    </Reference>
+    <Reference Include="system.data.DataSetExtensions">
+      <HintPath>C:\Program Files\QDV 7 ULT\system.data.DataSetExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.Linq">
+      <HintPath>C:\Program Files\QDV 7 ULT\System.Data.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite">
+      <HintPath>C:\Program Files\QDV 7 ULT\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="system.deployment">
+      <HintPath>C:\Program Files\QDV 7 ULT\system.deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <HintPath>C:\Program Files\QDV 7 ULT\System.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <HintPath>C:\Program Files\QDV 7 ULT\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions">
+      <HintPath>C:\Program Files\QDV 7 ULT\System.Web.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>C:\Program Files\QDV 7 ULT\System.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="system.xml">
+      <HintPath>C:\Program Files\QDV 7 ULT\system.xml.dll</HintPath>
+    </Reference>
+    <Reference Include="system.xml.linq">
+      <HintPath>C:\Program Files\QDV 7 ULT\system.xml.linq.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FrmChoice.Designer.vb">
+      <DependentUpon>FrmChoice.vb</DependentUpon>
+    </Compile>
+    <Compile Include="FrmChoice.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMessage.Designer.vb">
+      <DependentUpon>frmMessage.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmMessage.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmPromptDocuments.Designer.vb">
+      <DependentUpon>frmPromptDocuments.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmPromptDocuments.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions_Odoo.vb" />
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="My Project\Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ObjFromOdoo.vb" />
+    <Compile Include="PromptSFOperation.Designer.vb">
+      <DependentUpon>PromptSFOperation.vb</DependentUpon>
+    </Compile>
+    <Compile Include="PromptSFOperation.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Startup.vb" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FrmChoice.resx">
+      <DependentUpon>FrmChoice.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmMessage.resx">
+      <DependentUpon>frmMessage.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmPromptDocuments.resx">
+      <DependentUpon>frmPromptDocuments.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\Resources.resx">
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PromptSFOperation.resx">
+      <DependentUpon>PromptSFOperation.vb</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Folder.png" />
+    <None Include="Resources\Opportunity.png" />
+    <None Include="Resources\QDV2SF.png" />
+    <None Include="Resources\SF2QDV.png" />
+    <None Include="Resources\SFEstimate.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

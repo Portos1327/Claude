@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<NewDataSet>
+  <MacroData>
+    <StartupClass>Startup</StartupClass>
+    <_MacroName>Communication_With_SalesForce</_MacroName>
+    <MacroVersionNumber>3</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>ChilkatDotNet48</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>DevExpress.Data.v19.2</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>DevExpress.Printing.v19.2.Core</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>DevExpress.Sparkline.v19.2.Core</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>DevExpress.Utils.v19.2</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>DevExpress.XtraEditors.v19.2</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>GemBox.Document</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>Microsoft.VisualBasic</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>Qdv.CommonApi</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>Qdv.UserApi</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>SpreadsheetGear2017.Core</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>SpreadsheetGear2017.Drawing</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>SpreadsheetGear2017.Windows.Forms</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>SpreadsheetGear2017.Windows.Forms.Integration</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>system</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>System.ComponentModel.DataAnnotations</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>System.Core</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>system.data</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>system.data.DataSetExtensions</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>System.Data.Linq</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>System.Data.SQLite</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>system.deployment</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>System.Drawing</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>System.Net.Http</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>System.Web.Extensions</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>System.Windows.Forms</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>system.xml</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+  <MacroData>
+    <StartupClass>&lt;REFERENCE&gt;</StartupClass>
+    <_MacroName>system.xml.linq</_MacroName>
+    <MacroVersionNumber>0</MacroVersionNumber>
+    <MacroComments />
+  </MacroData>
+</NewDataSet>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crm_lead_view_form_qdv" model="ir.ui.view">
+        <field name="name">crm.lead.form.qdv</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Boutons de synchronisation -->
+            <xpath expr="//header" position="inside">
+                <button name="action_sync_to_quickdevis" 
+                        string="Synchroniser vers QuickDevis" 
+                        type="object" 
+                        class="btn-primary"
+                        icon="fa-paper-plane"
+                        invisible="type == 'lead'"
+                        help="Envoyer les 50 champs contexte vers QuickDevis 7"/>
+                <button name="action_refresh_from_quickdevis" 
+                        string="Rafraîchir depuis QuickDevis" 
+                        type="object" 
+                        class="btn-secondary"
+                        icon="fa-refresh"
+                        invisible="type == 'lead'"
+                        help="Récupérer les 58 champs de chiffrage depuis QuickDevis 7"/>
+            </xpath>
+            
+            <!-- Onglet QuickDevis 7 -->
+            <xpath expr="//notebook" position="inside">
+                <page string="QuickDevis 7" name="quickdevis">
+                    
+                    <group string="📥 Données envoyées à QuickDevis (50 champs)" name="odoo_to_qdv">
+                        <div class="alert alert-info" role="alert">
+                            Ces champs sont remplis dans Odoo et envoyés à QuickDevis au début du devis.
+                        </div>
+                        <group>
+                            <field name="qdv_nom_utilisateur_windows"/>
+                            <field name="qdv_opportunityname"/>
+                            <field name="qdv_oppowneremail"/>
+                            <field name="qdv_oppownermobilephone"/>
+                            <field name="qdv_oppownername"/>
+                            <field name="qdv_oppownertitle"/>
+                            <field name="qdv_lotnumber"/>
+                            <field name="qdv_customerreferencenumber"/>
+                            <field name="qdv_currencyisocode"/>
+                            <field name="qdv_workenddate"/>
+                            <field name="qdv_workstartdate"/>
+                            <field name="qdv_orgsfid"/>
+                            <field name="qdv_orgaddressline1"/>
+                            <field name="qdv_orgaddressline2"/>
+                            <field name="qdv_orgagencyname"/>
+                            <field name="qdv_orgcity"/>
+                            <field name="qdv_orgentitygeoidentifier"/>
+                            <field name="qdv_orgoperationalunit"/>
+                            <field name="qdv_orgphonenumber"/>
+                            <field name="qdv_orgpostalcode"/>
+                            <field name="qdv_orgprofitcentername"/>
+                            <field name="qdv_orgregion"/>
+                            <field name="qdv_primarycontactaccountname"/>
+                            <field name="qdv_primarycontactstreet"/>
+                            <field name="qdv_primarycontactaddressline2"/>
+                        </group>
+                        <group>
+                            <field name="qdv_primarycontactcity"/>
+                            <field name="qdv_primarycontactcountry"/>
+                            <field name="qdv_primarycontactdepartment"/>
+                            <field name="qdv_primarycontactemail"/>
+                            <field name="qdv_primarycontactlastname"/>
+                            <field name="qdv_primarycontactmailingcountry"/>
+                            <field name="qdv_primarycontactmobilephone"/>
+                            <field name="qdv_primarycontactpostalcode"/>
+                            <field name="qdv_primarycontactsalutation"/>
+                            <field name="qdv_primarycontactstate"/>
+                            <field name="qdv_primarycontacttitle"/>
+                            <field name="qdv_secondarycontactaccountname"/>
+                            <field name="qdv_secondarycontactstreet"/>
+                            <field name="qdv_secondarycontactaddressline2"/>
+                            <field name="qdv_secondarycontactcity"/>
+                            <field name="qdv_secondarycontactcountry"/>
+                            <field name="qdv_secondarycontactdepartment"/>
+                            <field name="qdv_secondarycontactemail"/>
+                            <field name="qdv_secondarycontactlastname"/>
+                            <field name="qdv_secondarycontactmailingcountry"/>
+                            <field name="qdv_secondarycontactmobilephone"/>
+                            <field name="qdv_secondarycontactpostalcode"/>
+                            <field name="qdv_secondarycontactsalutation"/>
+                            <field name="qdv_secondarycontactstate"/>
+                            <field name="qdv_secondarycontacttitle"/>
+                        </group>
+                    </group>
+                    
+                    <group string="📤 Données reçues de QuickDevis (58 champs)" name="qdv_to_odoo">
+                        <div class="alert alert-success" role="alert">
+                            Ces champs sont remplis par QuickDevis et reçus par Odoo à la fin du devis (résultats du chiffrage).
+                        </div>
+                        <group>
+                            <field name="qdv_sys_filepath" readonly="1"/>
+                            <field name="qdv_sys_filename" readonly="1"/>
+                            <field name="qdv_sys_version_num" readonly="1"/>
+                            <field name="qdv_vat" readonly="1"/>
+                            <field name="qdv_expirationdate" readonly="1"/>
+                            <field name="qdv_billingmilestone1" readonly="1"/>
+                            <field name="qdv_billingmilestone2" readonly="1"/>
+                            <field name="qdv_billingmilestone3" readonly="1"/>
+                            <field name="qdv_paymentmethod" readonly="1"/>
+                            <field name="qdv_paymentterm" readonly="1"/>
+                            <field name="qdv_currencyisocode" readonly="1"/>
+                            <field name="qdv_id" readonly="1"/>
+                            <field name="qdv_specificcost_prorata" readonly="1"/>
+                            <field name="qdv_specificcost_management" readonly="1"/>
+                            <field name="qdv_specificcost_hazards" readonly="1"/>
+                            <field name="qdv_specificcost_others" readonly="1"/>
+                            <field name="qdv_proportionalcosts_overheads" readonly="1"/>
+                            <field name="qdv_proportionalcosts_tosite" readonly="1"/>
+                            <field name="qdv_proportionalcosts_siteinsurance" readonly="1"/>
+                            <field name="qdv_proportionalcosts_insurance" readonly="1"/>
+                            <field name="qdv_proportionalcosts_margintarget" readonly="1"/>
+                            <field name="qdv_proportionalcosts_projectmargin" readonly="1"/>
+                            <field name="qdv_directexpenses_labour_productcode" readonly="1"/>
+                            <field name="qdv_directexpenses_labour_unitofwork" readonly="1"/>
+                            <field name="qdv_directexpenses_labour_quantity" readonly="1"/>
+                            <field name="qdv_directexpenses_labour_unitprice" readonly="1"/>
+                            <field name="qdv_directexpenses_materials_productcode" readonly="1"/>
+                            <field name="qdv_directexpenses_materials_quantity" readonly="1"/>
+                            <field name="qdv_directexpenses_materials_unitprice" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="qdv_directexpenses_materials_additionaldiscount" readonly="1"/>
+                            <field name="qdv_directexpenses_subcontracting_productcode" readonly="1"/>
+                            <field name="qdv_directexpenses_subcontracting_unitofwork" readonly="1"/>
+                            <field name="qdv_directexpenses_subcontracting_quantity" readonly="1"/>
+                            <field name="qdv_directexpenses_subcontracting_unitprice" readonly="1"/>
+                            <field name="qdv_indirectexpenses_technical_productcode" readonly="1"/>
+                            <field name="qdv_indirectexpenses_technical_unitofwork" readonly="1"/>
+                            <field name="qdv_indirectexpenses_technical_quantity" readonly="1"/>
+                            <field name="qdv_indirectexpenses_technical_unitprice" readonly="1"/>
+                            <field name="qdv_indirectexpenses_framing_productcode" readonly="1"/>
+                            <field name="qdv_indirectexpenses_framing_unitofwork" readonly="1"/>
+                            <field name="qdv_indirectexpenses_framing_quantity" readonly="1"/>
+                            <field name="qdv_indirectexpenses_framing_unitprice" readonly="1"/>
+                            <field name="qdv_indirectexpenses_mastery_productcode" readonly="1"/>
+                            <field name="qdv_indirectexpenses_mastery_unitofwork" readonly="1"/>
+                            <field name="qdv_indirectexpenses_mastery_quantity" readonly="1"/>
+                            <field name="qdv_indirectexpenses_mastery_unitprice" readonly="1"/>
+                            <field name="qdv_indirectexpenses_park_productcode" readonly="1"/>
+                            <field name="qdv_indirectexpenses_park_quantity" readonly="1"/>
+                            <field name="qdv_indirectexpenses_park_unitprice" readonly="1"/>
+                            <field name="qdv_indirectexpenses_park_additionaldiscount" readonly="1"/>
+                            <field name="qdv_indirectexpenses_otherfees_productcode" readonly="1"/>
+                            <field name="qdv_indirectexpenses_otherfees_quantity" readonly="1"/>
+                            <field name="qdv_indirectexpenses_otherfees_unitprice" readonly="1"/>
+                            <field name="qdv_indirectexpenses_otherfees_additionaldiscount" readonly="1"/>
+                            <field name="qdv_indirectexpenses_tools_productcode" readonly="1"/>
+                            <field name="qdv_indirectexpenses_tools_quantity" readonly="1"/>
+                            <field name="qdv_indirectexpenses_tools_unitprice" readonly="1"/>
+                            <field name="qdv_indirectexpenses_tools_additionaldiscount" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string="↔️ Champs bidirectionnels (2 champs)" name="bidirectional">
+                        <group>
+                            <field name="qdv_workstartdate"/>
+                            <field name="qdv_workenddate"/>
+                        </group>
+                    </group>
+                    
+                </page>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Vue liste avec colonnes importantes -->
+    <record id="crm_lead_view_tree_qdv" model="ir.ui.view">
+        <field name="name">crm.lead.tree.qdv</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='expected_revenue']" position="after">
+                <field name="qdv_opportunityname" string="Nom QDV" optional="show"/>
+                <field name="qdv_workstartdate" string="Début chantier" optional="hide"/>
+                <field name="qdv_workenddate" string="Fin chantier" optional="hide"/>
+                <field name="qdv_orgagencyname" string="Agence" optional="hide"/>
+                <field name="qdv_sys_filepath" string="Répertoire devis" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Vue recherche avec filtres -->
+    <record id="crm_lead_view_search_qdv" model="ir.ui.view">
+        <field name="name">crm.lead.search.qdv</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter string="QuickDevis actif" 
+                        name="quickdevis_active" 
+                        domain="[('qdv_opportunityname', '!=', False)]"
+                        help="Opportunités avec données QuickDevis"/>
+                <filter string="Devis chiffré" 
+                        name="quickdevis_quoted" 
+                        domain="[('qdv_sys_filepath', '!=', False)]"
+                        help="Opportunités avec devis QuickDevis généré"/>
+            </xpath>
+            <xpath expr="//filter[@name='salesperson']" position="after">
+                <filter string="Agence" 
+                        name="group_agency" 
+                        context="{'group_by': 'qdv_orgagencyname'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
