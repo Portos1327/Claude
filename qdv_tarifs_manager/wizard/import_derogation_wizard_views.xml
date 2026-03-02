@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_qdv_import_derogation_wizard_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.import.derogation.wizard.form</field>
+        <field name="model">qdv.tarif.import.derogation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import dérogations depuis Excel">
+                <sheet>
+                    <!-- PARAMÈTRES (avant analyse) -->
+                    <group string="Fabricant et fichier" invisible="analyse_done">
+                        <group>
+                            <field name="manufacturer_code" placeholder="Ex: BEG, LEG, SCH..."/>
+                            <field name="base_id" readonly="1" string="Base tarif (détectée)"/>
+                        </group>
+                        <group>
+                            <field name="excel_file" widget="binary" filename="excel_filename"/>
+                            <field name="excel_filename" invisible="1"/>
+                        </group>
+                    </group>
+
+                    <group string="Options" invisible="analyse_done">
+                        <group>
+                            <field name="price_mode_default" widget="radio"/>
+                            <field name="derogation_label_prefix" placeholder="Ex: Marché annuel BEG 2026"/>
+                        </group>
+                        <group>
+                            <field name="valid_from"/>
+                            <field name="valid_to"/>
+                            <field name="export_to_qdv" widget="boolean_toggle"/>
+                            <field name="update_existing" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+
+                    <!-- RÉSULTATS ANALYSE -->
+                    <group invisible="not analyse_done">
+                        <group string="Résultats analyse">
+                            <field name="manufacturer_code" readonly="1"/>
+                            <field name="excel_filename" readonly="1"/>
+                            <field name="total_lines" readonly="1" string="Lignes détectées"/>
+                            <field name="matched_lines" readonly="1"
+                                   decoration-success="matched_lines == total_lines"
+                                   decoration-warning="matched_lines &lt; total_lines"/>
+                        </group>
+                        <group string="Options">
+                            <field name="export_to_qdv" widget="boolean_toggle"/>
+                            <field name="update_existing" widget="boolean_toggle"/>
+                            <field name="valid_from"/>
+                            <field name="valid_to"/>
+                        </group>
+                        <div class="alert alert-warning" role="alert"
+                             invisible="not warning_message">
+                            <i class="fa fa-warning"/> <field name="warning_message" readonly="1"/>
+                        </div>
+                    </group>
+
+                    <!-- APERÇU LIGNES -->
+                    <field name="preview_line_ids" invisible="not analyse_done">
+                        <list editable="bottom"
+                              decoration-success="article_matched"
+                              decoration-warning="not article_matched"
+                              decoration-muted="not import_this">
+                            <field name="import_this" widget="boolean_toggle" string="✓"/>
+                            <field name="reference" string="Référence" readonly="1"/>
+                            <field name="description" string="Description" readonly="1" optional="show"/>
+                            <field name="detected_mode" string="Mode" readonly="1" widget="select"/>
+                            <field name="article_unit_price" string="Prix tarif (€)" readonly="1"
+                                   digits="[12,4]" decoration-muted="article_unit_price == 0"/>
+                            <field name="net_price_detected" string="Prix net (€)" readonly="1"
+                                   digits="[12,4]"
+                                   invisible="detected_mode != 'net_price'"/>
+                            <field name="rebate_detected" string="Remise (%)" readonly="1"
+                                   invisible="detected_mode != 'rebate'"/>
+                            <field name="computed_rebate" string="Remise calc. (%)" readonly="1"
+                                   decoration-success="computed_rebate > 0"/>
+                            <field name="article_matched" widget="boolean" string="Article" readonly="1"/>
+                            <field name="existing_derogation_label" string="Dérog. existante"
+                                   readonly="1" optional="show"/>
+                        </list>
+                    </field>
+                </sheet>
+                <footer>
+                    <button name="action_analyse" string="🔍 Analyser le fichier"
+                            type="object" class="btn-primary"
+                            invisible="analyse_done"/>
+                    <button name="action_analyse" string="🔄 Ré-analyser"
+                            type="object" class="btn-secondary"
+                            invisible="not analyse_done"/>
+                    <button name="action_import" string="✅ Importer les dérogations sélectionnées"
+                            type="object" class="btn-primary"
+                            invisible="not analyse_done"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_qdv_import_derogation_wizard" model="ir.actions.act_window">
+        <field name="name">📥 Importer dérogations depuis Excel</field>
+        <field name="res_model">qdv.tarif.import.derogation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

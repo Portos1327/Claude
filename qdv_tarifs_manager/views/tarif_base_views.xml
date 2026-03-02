@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ======== VUE LISTE BASES ======== -->
+    <record id="view_qdv_tarif_base_list" model="ir.ui.view">
+        <field name="name">qdv.tarif.base.list</field>
+        <field name="model">qdv.tarif.base</field>
+        <field name="arch" type="xml">
+            <list string="Bases Tarifs QDV"
+                  decoration-success="import_state == 'imported'"
+                  decoration-warning="import_state == 'partial'"
+                  decoration-danger="import_state == 'error'"
+                  decoration-muted="not file_path">
+                <field name="selected" widget="boolean_toggle"/>
+                <field name="manufacturer_code" string="Code"/>
+                <field name="manufacturer_name" string="Fabricant"/>
+                <field name="tarif_date" string="Date tarif"/>
+                <field name="version" string="V."/>
+                <field name="total_size" string="Taille (o)" optional="hide"/>
+                <field name="nb_parts" optional="hide"/>
+                <field name="rebate_count" string="Remises" optional="show"/>
+                <field name="article_count" string="Articles" optional="show"/>
+                <field name="import_state" widget="badge"
+                       decoration-success="import_state == 'imported'"
+                       decoration-warning="import_state == 'partial'"
+                       decoration-danger="import_state == 'error'"/>
+                <field name="last_import_date" string="Dernier import" optional="hide"/>
+                <field name="size_differs" widget="boolean" optional="hide" string="Δ L/W"/>
+                <field name="file_name" optional="hide"/>
+                <button name="action_import_articles"
+                        string="⬆ Importer"
+                        type="object"
+                        icon="fa-upload"/>
+                <button name="action_scan_qdb"
+                        string="🔎 Scanner"
+                        type="object"
+                        icon="fa-search"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ======== VUE FORMULAIRE BASE ======== -->
+    <record id="view_qdv_tarif_base_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.base.form</field>
+        <field name="model">qdv.tarif.base</field>
+        <field name="arch" type="xml">
+            <form string="Base Tarif QDV">
+                <header>
+                    <button name="action_import_articles"
+                            string="⬆ Importer les articles"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_scan_qdb"
+                            string="🔎 Scanner la base"
+                            type="object"
+                            class="btn-secondary"/>
+                    <field name="import_state" widget="statusbar"
+                           statusbar_visible="not_imported,imported,partial,error"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-list"
+                                name="action_view_articles" type="object">
+                            <field name="article_count" widget="statinfo" string="Articles"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-percent"
+                                name="action_view_rebates" type="object">
+                            <field name="rebate_count" widget="statinfo" string="Remises"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-sitemap"
+                                name="action_view_families" type="object">
+                            <field name="family_count" widget="statinfo" string="Familles"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-star"
+                                name="action_view_derogations" type="object">
+                            <field name="derogation_count" widget="statinfo" string="Dérogations"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Sélectionné"
+                            bg_color="bg-success" invisible="not selected"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="manufacturer_code" style="font-weight:bold; margin-right:8px;"/>
+                            <field name="manufacturer_name" placeholder="Nom du fabricant"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="📦 Fichier QDV">
+                            <field name="file_name" readonly="1"/>
+                            <field name="file_path" readonly="1"/>
+                            <field name="selected" widget="boolean_toggle"/>
+                        </group>
+                        <group string="📅 Métadonnées">
+                            <field name="tarif_date"/>
+                            <field name="version"/>
+                            <field name="total_size"/>
+                            <field name="nb_parts"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="📡 Tailles Local/Web">
+                            <field name="local_size"/>
+                            <field name="web_size"/>
+                            <field name="size_differs" widget="boolean"/>
+                        </group>
+                        <group string="💰 Remises">
+                            <field name="rebate_date"/>
+                            <field name="rebate_version"/>
+                        </group>
+                    </group>
+                    <group string="Import" invisible="import_state == 'not_imported'">
+                        <field name="last_import_date" readonly="1"/>
+                        <field name="import_error" readonly="1"
+                               invisible="not import_error"/>
+                    </group>
+
+                    <!-- ONGLETS -->
+                    <notebook>
+                        <page string="Remises par famille" name="rebates">
+                            <list editable="bottom">
+                                <field name="rebate_ids">
+                                    <list editable="bottom">
+                                        <field name="rebate_code" string="Code famille" readonly="1"/>
+                                        <field name="rebate_label" string="Libellé" readonly="1"/>
+                                        <field name="rebate_value" string="Catalogue (%)" readonly="1"/>
+                                        <field name="negotiated_value" string="Négociée (%)"/>
+                                        <field name="use_negotiated" string="Utiliser négociée" widget="boolean_toggle"/>
+                                        <field name="effective_rebate" string="Effective (%)" readonly="1"/>
+                                        <field name="article_count" string="Articles" readonly="1"/>
+                                        <field name="is_default" optional="show"/>
+                                    </list>
+                                </field>
+                            </list>
+                        </page>
+                        <page string="Familles" name="families">
+                            <list>
+                                <field name="family_ids">
+                                    <list>
+                                        <field name="depth" string="Niv."/>
+                                        <field name="family_code" string="Code"/>
+                                        <field name="family_label" string="Libellé"/>
+                                        <field name="breadcrumb" string="Arborescence" optional="show"/>
+                                        <field name="level1_label" string="Famille" optional="show"/>
+                                        <field name="level2_label" string="Sous-famille" optional="show"/>
+                                        <field name="article_count" string="Articles" readonly="1"/>
+                                    </list>
+                                </field>
+                            </list>
+                        </page>
+                        <page string="Dérogations" name="derogations">
+                            <list>
+                                <field name="derogation_ids">
+                                    <list editable="bottom">
+                                        <field name="active" widget="boolean_toggle"/>
+                                        <field name="derogation_code" string="Code dérogation"/>
+                                        <field name="reference" string="Référence"/>
+                                        <field name="derogation_label" string="Libellé"/>
+                                        <field name="article_unit_price" string="Prix tarif (€)" readonly="1" digits="[12,4]"/>
+                                        <field name="price_mode" string="Mode" widget="select"/>
+                                        <field name="rebate_value" string="Remise (%)"
+                                               invisible="price_mode != 'rebate'"/>
+                                        <field name="net_price_override" string="Prix net (€)"
+                                               invisible="price_mode != 'net_price'" digits="[12,4]"/>
+                                        <field name="effective_rebate" string="Eff. (%)" readonly="1"/>
+                                        <field name="article_matched" widget="boolean" string="Trouvé" readonly="1"/>
+                                    </list>
+                                </field>
+                            </list>
+                        </page>
+                        <page string="Articles" name="articles">
+                            <list>
+                                <field name="article_ids">
+                                    <list>
+                                        <field name="reference"/>
+                                        <field name="designation"/>
+                                        <field name="unit_price" string="Prix tarif (€)" readonly="1" digits="[12,4]"/>
+                                        <field name="effective_rebate" string="Remise eff. (%)" readonly="1"/>
+                                        <field name="net_price" string="Prix net (€)" readonly="1" digits="[12,4]"/>
+                                        <field name="fam_level1" string="Famille" optional="show"/>
+                                        <field name="has_derogation" widget="boolean" optional="show"/>
+                                        <field name="product_linked" widget="boolean"/>
+                                    </list>
+                                </field>
+                            </list>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ======== VUE RECHERCHE ======== -->
+    <record id="view_qdv_tarif_base_search" model="ir.ui.view">
+        <field name="name">qdv.tarif.base.search</field>
+        <field name="model">qdv.tarif.base</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="manufacturer_code" string="Code"/>
+                <field name="manufacturer_name" string="Fabricant"/>
+                <filter string="Sélectionnés" name="selected" domain="[('selected','=',True)]"/>
+                <filter string="Non importés" name="not_imported" domain="[('import_state','=','not_imported')]"/>
+                <filter string="Importés" name="imported" domain="[('import_state','=','imported')]"/>
+                <filter string="Avec remises" name="has_rebates" domain="[('rebate_ids','!=',False)]"/>
+                <filter string="Différence Local/Web" name="size_differs" domain="[('size_differs','=',True)]"/>
+                <separator/>
+                <group expand="0" string="Grouper par">
+                    <filter string="État import" name="group_import_state" context="{'group_by': 'import_state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ======== ACTION ======== -->
+    <record id="action_qdv_tarif_base" model="ir.actions.act_window">
+        <field name="name">Bases Tarifs QDV</field>
+        <field name="res_model">qdv.tarif.base</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_qdv_tarif_base_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune base découverte
+            </p>
+            <p>Utilisez <b>Découvrir les bases</b> depuis la Configuration pour scanner votre dossier Tarifs ID V2.</p>
+        </field>
+    </record>
+
+    <!-- ======== SERVER ACTIONS MASSE ======== -->
+    <record id="action_select_all_bases" model="ir.actions.server">
+        <field name="name">Tout sélectionner</field>
+        <field name="model_id" ref="model_qdv_tarif_base"/>
+        <field name="binding_model_id" ref="model_qdv_tarif_base"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+records.write({'selected': True})
+        </field>
+    </record>
+
+    <record id="action_deselect_all_bases" model="ir.actions.server">
+        <field name="name">Tout désélectionner</field>
+        <field name="model_id" ref="model_qdv_tarif_base"/>
+        <field name="binding_model_id" ref="model_qdv_tarif_base"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+records.write({'selected': False})
+        </field>
+    </record>
+
+    <record id="action_import_selected_bases" model="ir.actions.server">
+        <field name="name">Importer les sélectionnés</field>
+        <field name="model_id" ref="model_qdv_tarif_base"/>
+        <field name="binding_model_id" ref="model_qdv_tarif_base"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Import articles QDV',
+    'res_model': 'qdv.tarif.import.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {'default_base_ids': records.ids},
+}
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ======== WIZARD DÉCOUVERTE ======== -->
+    <record id="view_qdv_tarif_discover_wizard_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.discover.wizard.form</field>
+        <field name="model">qdv.tarif.discover.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Découverte des bases QDV">
+                <header>
+                    <!-- Étape 1: lancer la découverte -->
+                    <button name="action_discover"
+                            string="🔍 Lancer la découverte"
+                            type="object"
+                            class="btn-primary"
+                            invisible="discovery_done"/>
+                    <!-- Étape 2: sélection et confirmation -->
+                    <button name="action_select_all"
+                            string="✅ Tout sélectionner"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="not discovery_done"/>
+                    <button name="action_deselect_all"
+                            string="⬜ Tout désélectionner"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="not discovery_done"/>
+                    <button name="action_select_new_only"
+                            string="🆕 Nouvelles seulement"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="not discovery_done"/>
+                    <button name="action_confirm_selection"
+                            string="💾 Enregistrer la sélection"
+                            type="object"
+                            class="btn-primary"
+                            invisible="not discovery_done"/>
+                </header>
+                <sheet>
+                    <group string="Dossier analysé">
+                        <field name="tarifs_folder" readonly="1"/>
+                        <field name="filter_manufacturer"
+                               placeholder="Ex: BEG  ou  BEG, LEG, SCH  (vide = tous)"
+                               string="🔎 Filtrer par fabricant(s)"/>
+                    </group>
+
+                    <!-- Compteurs résumé -->
+                    <div class="oe_button_box" name="button_box" invisible="not discovery_done">
+                        <div class="oe_stat_button" style="cursor:default">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="total_found"/></span>
+                                <span class="o_stat_text">Trouvées</span>
+                            </div>
+                        </div>
+                        <div class="oe_stat_button" style="cursor:default; color:green">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="total_new"/></span>
+                                <span class="o_stat_text">Nouvelles</span>
+                            </div>
+                        </div>
+                        <div class="oe_stat_button" style="cursor:default; color:blue">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="total_existing"/></span>
+                                <span class="o_stat_text">Existantes</span>
+                            </div>
+                        </div>
+                        <div class="oe_stat_button" style="cursor:default; color:orange">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="total_selected"/></span>
+                                <span class="o_stat_text">Sélectionnées</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tableau des bases découvertes -->
+                    <field name="discovery_line_ids" invisible="not discovery_done">
+                        <list editable="bottom"
+                              decoration-success="status == 'new' and file_exists"
+                              decoration-info="status == 'existing'"
+                              decoration-danger="not file_exists">
+                            <field name="selected" widget="boolean_toggle"/>
+                            <field name="manufacturer_code" string="Code" readonly="1"/>
+                            <field name="manufacturer_name" string="Fabricant" readonly="1"/>
+                            <field name="file_name" string="Fichier .qdb" readonly="1" optional="show"/>
+                            <field name="file_exists" widget="boolean" readonly="1" string="Fichier"/>
+                            <field name="local_date" string="Date (local)" readonly="1" optional="show"/>
+                            <field name="local_version" string="V." readonly="1" optional="show"/>
+                            <field name="local_size" string="Taille (o)" readonly="1" optional="show"/>
+                            <field name="web_size" string="Taille web" readonly="1" optional="show"/>
+                            <field name="has_rebates" widget="boolean" readonly="1" string="Remises"/>
+                            <field name="rebate_count" readonly="1" string="Nb rem."/>
+                            <field name="status" widget="badge"
+                                   decoration-success="status == 'new'"
+                                   decoration-info="status == 'existing'"
+                                   readonly="1"/>
+                        </list>
+                    </field>
+
+                    <!-- Log de découverte -->
+                    <group string="Journal de découverte" invisible="not discovery_log">
+                        <field name="discovery_log" widget="text" readonly="1" nolabel="1"
+                               style="font-family: monospace; font-size: 11px;"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ======== WIZARD IMPORT ======== -->
+    <record id="view_qdv_tarif_import_wizard_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.import.wizard.form</field>
+        <field name="model">qdv.tarif.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import articles QDV">
+                <header>
+                    <button name="action_import"
+                            string="⬆ Lancer l'import"
+                            type="object"
+                            class="btn-primary"
+                            invisible="import_done"/>
+                    <button string="Fermer"
+                            class="btn-secondary"
+                            special="cancel"
+                            invisible="not import_done"/>
+                </header>
+                <sheet>
+                    <group string="Bases à importer" invisible="import_done">
+                        <field name="base_ids" widget="many2many_tags"/>
+                    </group>
+                    <group string="Options" invisible="import_done">
+                        <field name="update_existing"/>
+                        <field name="apply_rebates"/>
+                        <field name="create_odoo_products"/>
+                        <field name="limit_rows"
+                               help="0 = pas de limite. Utilisez une valeur > 0 pour tester avec peu d'articles."/>
+                    </group>
+                    <group string="Résultat" invisible="not import_done">
+                        <field name="result_message" widget="text" readonly="1" nolabel="1"
+                               style="font-family: monospace; white-space: pre; min-height: 200px;"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ======== WIZARD SCAN RESULT ======== -->
+    <record id="view_qdv_tarif_scan_result_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.scan.result.form</field>
+        <field name="model">qdv.tarif.scan.result</field>
+        <field name="arch" type="xml">
+            <form string="Scan de la base QDV">
+                <sheet>
+                    <group>
+                        <field name="base_id" readonly="1"/>
+                    </group>
+                    <field name="content" widget="text" readonly="1" nolabel="1"
+                           style="font-family: monospace; font-size: 11px; min-height: 400px; white-space: pre;"/>
+                </sheet>
+                <footer>
+                    <button string="Fermer" class="btn-primary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ======== WIZARD LIEN PRODUIT ======== -->
+    <record id="view_qdv_tarif_link_wizard_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.link.wizard.form</field>
+        <field name="model">qdv.tarif.link.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Lier à un produit Odoo">
+                <sheet>
+                    <group>
+                        <field name="article_id" readonly="1"/>
+                        <field name="product_id"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm_link" string="Confirmer le lien"
+                            type="object" class="btn-primary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ======== WIZARD ASSIGNATION DÉROGATION ======== -->
+</odoo>

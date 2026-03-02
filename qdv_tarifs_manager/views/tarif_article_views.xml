@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- LISTE ARTICLES -->
+    <record id="view_qdv_tarif_article_list" model="ir.ui.view">
+        <field name="name">qdv.tarif.article.list</field>
+        <field name="model">qdv.tarif.article</field>
+        <field name="arch" type="xml">
+            <list string="Articles QDV"
+                  decoration-success="product_linked"
+                  decoration-warning="has_derogation"
+                  decoration-muted="not unit_price">
+                <field name="manufacturer_code" string="Fab."/>
+                <field name="reference" string="Référence"/>
+                <field name="designation" string="Désignation"/>
+                <field name="unit_price" string="Prix tarif (€)" digits="[12,4]" readonly="1"/>
+                <field name="rebate_code" string="Code remise" optional="show"/>
+                <field name="effective_rebate" string="Remise eff. (%)" readonly="1"
+                       decoration-success="effective_rebate > 0"/>
+                <field name="net_price" string="Prix net (€)" digits="[12,4]" readonly="1"/>
+                <field name="unit" optional="show"/>
+                <!-- Familles -->
+                <field name="fam_level1" string="Famille" optional="show"/>
+                <field name="fam_level2" string="Sous-famille" optional="show"/>
+                <field name="family_breadcrumb" string="Arborescence" optional="show"/>
+                <!-- Dérogation -->
+                <field name="has_derogation" widget="boolean" string="Dérog." optional="show"/>
+                <field name="derogation_id" string="Code dérog." optional="show"/>
+                <!-- Odoo -->
+                <field name="product_linked" widget="boolean" string="Lié Odoo"/>
+                <!-- Boutons -->
+                <button name="action_scan_derogations" string="Dérogation"
+                        type="object" icon="fa-star"
+                        title="Chercher une dérogation pour cet article"
+                        invisible="has_derogation"/>
+                <button name="action_remove_derogation" string="Retirer"
+                        type="object" icon="fa-times"
+                        title="Retirer la dérogation"
+                        invisible="not has_derogation"/>
+                <button name="action_create_product" string="Créer produit"
+                        type="object" icon="fa-plus-circle"
+                        invisible="product_linked"/>
+                <button name="action_open_product" string="Voir produit"
+                        type="object" icon="fa-external-link"
+                        invisible="not product_linked"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORMULAIRE ARTICLE -->
+    <record id="view_qdv_tarif_article_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.article.form</field>
+        <field name="model">qdv.tarif.article</field>
+        <field name="arch" type="xml">
+            <form string="Article QDV">
+                <header>
+                    <button name="action_scan_derogations" string="🔍 Chercher dérogation"
+                            type="object" class="btn-warning" invisible="has_derogation"/>
+                    <button name="action_remove_derogation" string="✖ Retirer la dérogation"
+                            type="object" class="btn-secondary" invisible="not has_derogation"/>
+                    <button name="action_create_product" string="Créer produit Odoo"
+                            type="object" class="btn-primary" invisible="product_linked"/>
+                    <button name="action_link_product" string="Lier à un produit"
+                            type="object" class="btn-secondary" invisible="product_linked"/>
+                    <button name="action_open_product" string="Ouvrir produit Odoo"
+                            type="object" class="btn-secondary" invisible="not product_linked"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Dérogation active"
+                            bg_color="bg-warning" invisible="not has_derogation"/>
+                    <widget name="web_ribbon" title="Lié Odoo" bg_color="bg-success"
+                            invisible="not product_linked or has_derogation"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="manufacturer_code" readonly="1"
+                                   style="font-weight:bold; margin-right:8px;"/>
+                            <field name="reference" readonly="1"/>
+                        </h1>
+                        <h3><field name="designation" readonly="1"/></h3>
+                    </div>
+                    <notebook>
+                        <page string="Fiche article" name="main">
+                            <group>
+                                <group string="Fabricant">
+                                    <field name="base_id" readonly="1"/>
+                                    <field name="manufacturer_name" readonly="1"/>
+                                    <field name="unit" readonly="1"/>
+                                    <field name="import_date" readonly="1"/>
+                                </group>
+                                <group string="Prix">
+                                    <field name="unit_price" readonly="1"
+                                           string="Prix tarif catalogue (€)"/>
+                                    <field name="rebate_code" readonly="1"/>
+                                    <field name="rebate_value" readonly="1"
+                                           string="Remise famille (%)"/>
+                                    <field name="effective_rebate" readonly="1"
+                                           string="Remise effective (%)"/>
+                                    <field name="net_price" readonly="1"
+                                           string="Prix net calculé (€)"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Famille / Arborescence" name="family">
+                            <group>
+                                <group string="Codes">
+                                    <field name="family_code" readonly="1" string="Code famille complet"/>
+                                    <field name="family_id" readonly="1"/>
+                                    <field name="family_breadcrumb" readonly="1" string="Arborescence"/>
+                                </group>
+                                <group string="Niveaux">
+                                    <field name="fam_level0" readonly="1" string="Niveau 0 — Marque"/>
+                                    <field name="fam_level1" readonly="1" string="Niveau 1 — Famille"/>
+                                    <field name="fam_level2" readonly="1" string="Niveau 2 — Sous-famille"/>
+                                    <field name="fam_level3" readonly="1" string="Niveau 3 — Catégorie"/>
+                                    <field name="fam_level4" readonly="1" string="Niveau 4 — Sous-catégorie"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Dérogation" name="derogation">
+                            <group>
+                                <group string="Dérogation assignée">
+                                    <field name="derogation_id"
+                                           domain="[('manufacturer_code','=',manufacturer_code),('active','=',True)]"/>
+                                    <field name="has_derogation" readonly="1" widget="boolean"/>
+                                </group>
+                                <group string="Tarification dérogatoire" invisible="not has_derogation">
+                                    <field name="derogation_rebate" readonly="1" string="Remise dérogatoire (%)"/>
+                                    <field name="derogation_net_price" readonly="1" string="Prix net dérogatoire (€)"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Produit Odoo" name="odoo">
+                            <group>
+                                <field name="product_id"/>
+                                <field name="product_linked" readonly="1" widget="boolean"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- RECHERCHE ARTICLES -->
+    <record id="view_qdv_tarif_article_search" model="ir.ui.view">
+        <field name="name">qdv.tarif.article.search</field>
+        <field name="model">qdv.tarif.article</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="reference" string="Référence"/>
+                <field name="designation" string="Désignation"/>
+                <field name="manufacturer_code" string="Fabricant"/>
+                <field name="family_code" string="Code famille"/>
+                <field name="fam_level1" string="Famille niveau 1"/>
+                <field name="fam_level2" string="Sous-famille"/>
+                <field name="rebate_code" string="Code remise"/>
+                <separator/>
+                <filter string="Avec dérogation" name="has_derog" domain="[('has_derogation','=',True)]"/>
+                <filter string="Sans dérogation" name="no_derog" domain="[('has_derogation','=',False)]"/>
+                <filter string="Liés à Odoo" name="linked" domain="[('product_linked','=',True)]"/>
+                <filter string="Non liés" name="not_linked" domain="[('product_linked','=',False)]"/>
+                <filter string="Prix non renseigné" name="no_price" domain="[('unit_price','=',0)]"/>
+                <separator/>
+                <group expand="1" string="Grouper par">
+                    <filter string="Fabricant" name="group_manufacturer"
+                            context="{'group_by': 'manufacturer_code'}"/>
+                    <filter string="Famille (niveau 1)" name="group_family1"
+                            context="{'group_by': 'fam_level1'}"/>
+                    <filter string="Sous-famille (niveau 2)" name="group_family2"
+                            context="{'group_by': 'fam_level2'}"/>
+                    <filter string="Catégorie (niveau 3)" name="group_family3"
+                            context="{'group_by': 'fam_level3'}"/>
+                    <filter string="Code remise" name="group_rebate"
+                            context="{'group_by': 'rebate_code'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_qdv_tarif_article" model="ir.actions.act_window">
+        <field name="name">Articles QDV</field>
+        <field name="res_model">qdv.tarif.article</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_qdv_tarif_article_search"/>
+    </record>
+</odoo>

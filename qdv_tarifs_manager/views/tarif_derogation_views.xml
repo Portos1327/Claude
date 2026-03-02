@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- LISTE DÉROGATIONS -->
+    <record id="view_qdv_tarif_derogation_list" model="ir.ui.view">
+        <field name="name">qdv.tarif.derogation.list</field>
+        <field name="model">qdv.tarif.derogation</field>
+        <field name="arch" type="xml">
+            <list string="Dérogations QDV" editable="bottom"
+                  decoration-success="article_matched"
+                  decoration-warning="not article_matched"
+                  decoration-muted="not active">
+                <field name="active" widget="boolean_toggle"/>
+                <field name="manufacturer_code" string="Fab."/>
+                <field name="derogation_code" string="Code dérogation"/>
+                <field name="reference" string="Référence article"/>
+                <field name="derogation_label" string="Libellé"/>
+                <!-- Prix tarif de l'article (readonly) -->
+                <field name="article_unit_price" string="Prix tarif (€)" readonly="1" digits="[12,4]"
+                       decoration-muted="article_unit_price == 0"/>
+                <field name="price_mode" string="Mode" widget="select"/>
+                <field name="rebate_value" string="Remise (%)"
+                       invisible="price_mode != 'rebate'"/>
+                <field name="net_price_override" string="Prix net (€)"
+                       invisible="price_mode != 'net_price'" digits="[12,4]"/>
+                <!-- Valeurs calculées -->
+                <field name="effective_rebate" string="Remise eff. (%)" readonly="1"
+                       decoration-success="effective_rebate > 0"/>
+                <field name="effective_net_price" string="Prix net eff. (€)" readonly="1" digits="[12,4]"
+                       optional="show"/>
+                <field name="article_matched" widget="boolean" string="Article trouvé" readonly="1"/>
+                <field name="article_designation" string="Désignation" optional="show" readonly="1"/>
+                <field name="valid_from" optional="show"/>
+                <field name="valid_to" optional="show"/>
+                <button name="action_export_to_qdv" string="📤 QDV"
+                        type="object" icon="fa-upload"
+                        title="Exporter vers QDV"
+                        invisible="qdv_exported"/>
+                <button name="action_export_to_qdv" string="🔄 QDV"
+                        type="object" icon="fa-refresh"
+                        title="Ré-exporter vers QDV"
+                        invisible="not qdv_exported"/>
+                <button name="action_apply_to_article" string="Appliquer"
+                        type="object" icon="fa-check"
+                        title="Appliquer cette dérogation à l'article correspondant"
+                        invisible="not article_matched"/>
+                <button name="action_view_article" string="Voir article"
+                        type="object" icon="fa-external-link"
+                        invisible="not article_matched"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORMULAIRE DÉROGATION -->
+    <record id="view_qdv_tarif_derogation_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.derogation.form</field>
+        <field name="model">qdv.tarif.derogation</field>
+        <field name="arch" type="xml">
+            <form string="Dérogation remise QDV">
+                <header>
+                    <button name="action_export_to_qdv"
+                            string="📤 Exporter vers QDV"
+                            type="object" class="btn-primary"
+                            title="Crée la remise-dérogation dans Rebates.qdbr et change le RebateCode dans le .qdb"
+                            invisible="qdv_exported"/>
+                    <button name="action_export_to_qdv"
+                            string="🔄 Ré-exporter vers QDV"
+                            type="object" class="btn-secondary"
+                            title="Met à jour Rebates.qdbr (backup automatique créé)"
+                            invisible="not qdv_exported"/>
+                    <button name="action_remove_from_qdv"
+                            string="↩ Retirer de QDV"
+                            type="object" class="btn-danger"
+                            title="Supprime la ligne dérogation de Rebates.qdbr et remet le code famille d'origine"
+                            invisible="not qdv_exported"/>
+                    <button name="action_apply_to_article"
+                            string="✅ Appliquer à l'article"
+                            type="object" class="btn-primary"
+                            invisible="not article_matched"/>
+                    <button name="action_view_article"
+                            string="📋 Voir l'article"
+                            type="object" class="btn-secondary"
+                            invisible="not article_matched"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-tag"
+                                name="action_view_article" type="object"
+                                invisible="not article_matched">
+                            <span class="o_stat_text">Article trouvé</span>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Article non trouvé" bg_color="bg-warning"
+                            invisible="article_matched"/>
+                    <widget name="web_ribbon" title="Inactive" bg_color="bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="derogation_code" string="Code dérogation"/>
+                        <h1><field name="derogation_code" placeholder="Ex: 062525 LEG"/></h1>
+                        <h3><field name="derogation_label" placeholder="Ex: Accord commercial Legrand 2026"/></h3>
+                    </div>
+                    <group>
+                        <group string="Fabricant et référence">
+                            <field name="manufacturer_code"
+                                   placeholder="Ex: LEG, SCH, ABB..."/>
+                            <field name="base_id" readonly="1"
+                                   string="Base tarif (calculée)"/>
+                            <field name="reference"
+                                   placeholder="Ex: 062525 — laisser vide pour base entière"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Article correspondant">
+                            <field name="article_matched" widget="boolean" readonly="1"/>
+                            <field name="article_designation" readonly="1"/>
+                            <field name="article_unit_price" readonly="1"
+                                   string="Prix tarif catalogue (€)"/>
+                            <field name="article_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Tarification dérogatoire">
+                        <group>
+                            <field name="price_mode" widget="radio"/>
+                        </group>
+                        <group>
+                            <field name="rebate_value" string="Remise (%)"
+                                   invisible="price_mode != 'rebate'"/>
+                            <field name="net_price_override" string="Prix net (€)"
+                                   invisible="price_mode != 'net_price'" digits="[12,4]"/>
+                        </group>
+                        <group string="Valeurs calculées" col="4">
+                            <field name="computed_rebate" readonly="1" string="Remise calculée (%)"/>
+                            <field name="computed_net_price" readonly="1" string="Prix net calculé (€)" digits="[12,4]"/>
+                            <field name="effective_rebate" readonly="1" string="Remise effective (%)"/>
+                            <field name="effective_net_price" readonly="1" string="Prix net effectif (€)" digits="[12,4]"/>
+                        </group>
+                    </group>
+                    <group string="Statut export QDV">
+                        <group>
+                            <field name="qdv_exported" widget="boolean" readonly="1"
+                                   string="Exporté vers QDV"/>
+                            <field name="qdv_export_date" readonly="1" invisible="not qdv_exported"/>
+                        </group>
+                        <group>
+                            <field name="qdv_export_error" readonly="1"
+                                   invisible="not qdv_export_error"
+                                   string="⚠️ Erreur"
+                                   widget="char"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Validité">
+                            <field name="valid_from"/>
+                            <field name="valid_to"/>
+                        </group>
+                        <group string="Motif">
+                            <field name="comment" nolabel="1"
+                                   placeholder="Accord commercial, chantier, client particulier..."/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- RECHERCHE DÉROGATIONS -->
+    <record id="view_qdv_tarif_derogation_search" model="ir.ui.view">
+        <field name="name">qdv.tarif.derogation.search</field>
+        <field name="model">qdv.tarif.derogation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="manufacturer_code" string="Fabricant"/>
+                <field name="derogation_code" string="Code dérogation"/>
+                <field name="reference" string="Référence"/>
+                <field name="derogation_label" string="Libellé"/>
+                <separator/>
+                <filter string="Actives" name="active" domain="[('active','=',True)]"/>
+                <filter string="Exportées vers QDV" name="exported" domain="[('qdv_exported','=',True)]"/>
+                <filter string="Non exportées" name="not_exported" domain="[('qdv_exported','=',False)]"/>
+                <filter string="Mode remise %" name="rebate" domain="[('price_mode','=','rebate')]"/>
+                <filter string="Mode prix net" name="net" domain="[('price_mode','=','net_price')]"/>
+                <separator/>
+                <group expand="1" string="Grouper par">
+                    <filter string="Fabricant" name="group_fab" context="{'group_by': 'manufacturer_code'}"/>
+                    <filter string="Mode tarification" name="group_mode" context="{'group_by': 'price_mode'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_qdv_tarif_derogation" model="ir.actions.act_window">
+        <field name="name">Dérogations QDV</field>
+        <field name="res_model">qdv.tarif.derogation</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_qdv_tarif_derogation_search"/>
+        <field name="context">{'search_default_active': 1, 'search_default_group_fab': 1}</field>
+    </record>
+
+    <!-- ACTIONS SERVEUR pour multi-sélection dans la liste -->
+    <record id="action_qdv_derog_export_selected" model="ir.actions.server">
+        <field name="name">📤 Exporter vers QDV</field>
+        <field name="model_id" ref="model_qdv_tarif_derogation"/>
+        <field name="binding_model_id" ref="model_qdv_tarif_derogation"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_export_to_qdv()</field>
+    </record>
+
+    <record id="action_qdv_derog_remove_selected" model="ir.actions.server">
+        <field name="name">↩ Retirer de QDV (restaurer code remise famille)</field>
+        <field name="model_id" ref="model_qdv_tarif_derogation"/>
+        <field name="binding_model_id" ref="model_qdv_tarif_derogation"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_remove_from_qdv()</field>
+    </record>
+
+    <record id="action_qdv_derog_delete_revert" model="ir.actions.server">
+        <field name="name">🗑️ Supprimer d'Odoo + retirer de QDV</field>
+        <field name="model_id" ref="model_qdv_tarif_derogation"/>
+        <field name="binding_model_id" ref="model_qdv_tarif_derogation"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_delete_and_revert_qdv()</field>
+    </record>
+
+    <!-- WIZARD SCAN DÉROGATIONS -->
+    <record id="view_qdv_scan_derogation_wizard_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.scan.derogation.wizard.form</field>
+        <field name="model">qdv.tarif.scan.derogation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Scan dérogations QDV">
+                <sheet>
+                    <!-- Paramètres -->
+                    <group string="Paramètres du scan" invisible="scan_done">
+                        <field name="scan_mode" widget="radio"/>
+                        <field name="filter_base_id"
+                               invisible="scan_mode != 'bulk'"
+                               string="Limiter au fabricant"/>
+                        <field name="manufacturer_code" readonly="1"
+                               invisible="scan_mode != 'single'"/>
+                        <field name="reference" readonly="1"
+                               invisible="scan_mode != 'single'"/>
+                    </group>
+
+                    <!-- Résultats -->
+                    <group invisible="not scan_done">
+                        <field name="result_count" readonly="1" string="Correspondances trouvées"/>
+                        <field name="no_result_message" readonly="1" string="Résultat"
+                               invisible="result_count != 0"/>
+                    </group>
+
+                    <list invisible="not scan_done or result_count == 0">
+                        <field name="result_line_ids">
+                            <list editable="bottom"
+                                  decoration-warning="has_existing_derogation"
+                                  decoration-success="not has_existing_derogation">
+                                <field name="apply" widget="boolean_toggle" string="Appliquer"/>
+                                <field name="manufacturer_code" string="Fab." readonly="1"/>
+                                <field name="reference" string="Référence" readonly="1"/>
+                                <field name="designation" string="Désignation" readonly="1" optional="show"/>
+                                <field name="unit_price" string="Prix tarif" readonly="1" digits="[12,4]"/>
+                                <field name="current_rebate" string="Remise actuelle (%)" readonly="1"
+                                       decoration-muted="current_rebate == 0"/>
+                                <field name="current_net_price" string="Prix net actuel" readonly="1" digits="[12,4]"/>
+                                <field name="derog_code" string="Code dérog." readonly="1"/>
+                                <field name="derog_label" string="Libellé dérog." readonly="1" optional="show"/>
+                                <field name="derog_rebate" string="Remise dérog. (%)" readonly="1"
+                                       decoration-success="derog_rebate > 0"/>
+                                <field name="derog_net_price" string="Prix net dérog." readonly="1" digits="[12,4]"/>
+                                <field name="derog_mode" string="Mode" readonly="1" optional="show"/>
+                                <field name="has_existing_derogation" widget="boolean" string="Déjà dérog." readonly="1"/>
+                                <field name="current_derogation_id" string="Dérog. actuelle" readonly="1" optional="show"/>
+                            </list>
+                        </field>
+                    </list>
+                </sheet>
+                <footer>
+                    <button name="action_scan" string="🔍 Lancer le scan"
+                            type="object" class="btn-primary"
+                            invisible="scan_done"/>
+                    <button name="action_apply_selected" string="✅ Appliquer la sélection"
+                            type="object" class="btn-primary"
+                            invisible="not scan_done or result_count == 0"/>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- RÉSULTAT scan dérogation (TransientModel) -->
+    <record id="view_qdv_scan_derogation_result_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.scan.derogation.result.form</field>
+        <field name="model">qdv.tarif.scan.derogation.result</field>
+        <field name="arch" type="xml">
+            <form string="Résultat scan dérogation">
+                <sheet>
+                    <group>
+                        <field name="article_id" readonly="1"/>
+                        <field name="derogation_id" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action scan masse depuis menu -->
+    <record id="action_scan_derogations_bulk" model="ir.actions.act_window">
+        <field name="name">🔍 Scanner les dérogations</field>
+        <field name="res_model">qdv.tarif.scan.derogation.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_scan_mode': 'bulk'}</field>
+    </record>
+</odoo>

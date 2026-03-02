@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_qdv_tarifs_root" name="QDV Tarifs" sequence="101"/>
+
+    <menuitem id="menu_qdv_tarifs_config" name="⚙️ Configuration"
+              parent="menu_qdv_tarifs_root" action="action_qdv_tarif_config" sequence="10"/>
+
+    <menuitem id="menu_qdv_tarifs_bases" name="📦 Bases Fabricants"
+              parent="menu_qdv_tarifs_root" action="action_qdv_tarif_base" sequence="20"/>
+
+    <menuitem id="menu_qdv_tarifs_articles" name="📋 Articles importés"
+              parent="menu_qdv_tarifs_root" action="action_qdv_tarif_article" sequence="30"/>
+
+    <menuitem id="menu_qdv_tarifs_families" name="🌿 Familles / Arborescence"
+              parent="menu_qdv_tarifs_root" action="action_qdv_tarif_family" sequence="35"/>
+
+    <menuitem id="menu_qdv_tarifs_remises_root" name="💰 Remises"
+              parent="menu_qdv_tarifs_root" sequence="40"/>
+    <menuitem id="menu_qdv_tarifs_rebates" name="Remises par famille"
+              parent="menu_qdv_tarifs_remises_root" action="action_qdv_tarif_rebate" sequence="10"/>
+    <menuitem id="menu_qdv_tarifs_derogations" name="Dérogations par référence"
+              parent="menu_qdv_tarifs_remises_root" action="action_qdv_tarif_derogation" sequence="20"/>
+    <menuitem id="menu_qdv_scan_derogations" name="🔍 Scanner les dérogations"
+              parent="menu_qdv_tarifs_remises_root" action="action_scan_derogations_bulk" sequence="30"/>
+    <menuitem id="menu_qdv_import_derogations_excel" name="📥 Importer depuis Excel"
+              parent="menu_qdv_tarifs_remises_root" action="action_qdv_import_derogation_wizard" sequence="40"/>
+
+    <menuitem id="menu_qdv_tarifs_surveillance_root" name="🔄 Surveillance"
+              parent="menu_qdv_tarifs_root" sequence="80"/>
+    <menuitem id="menu_qdv_tarifs_sync_log" name="Journal synchronisation"
+              parent="menu_qdv_tarifs_surveillance_root" action="action_qdv_tarif_sync_log" sequence="10"/>
+    <menuitem id="menu_qdv_tarifs_snapshots" name="Fichiers surveillés"
+              parent="menu_qdv_tarifs_surveillance_root" action="action_qdv_tarif_file_snapshot" sequence="20"/>
+    <menuitem id="menu_qdv_tarifs_run_now" name="▶ Lancer maintenant"
+              parent="menu_qdv_tarifs_surveillance_root" action="action_run_cron_now" sequence="30"/>
+</odoo>

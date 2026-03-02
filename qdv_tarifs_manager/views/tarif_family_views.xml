@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- LISTE FAMILLES -->
+    <record id="view_qdv_tarif_family_list" model="ir.ui.view">
+        <field name="name">qdv.tarif.family.list</field>
+        <field name="model">qdv.tarif.family</field>
+        <field name="arch" type="xml">
+            <list string="Familles QDV"
+                  decoration-info="depth == 0"
+                  decoration-success="depth == 1"
+                  decoration-muted="depth >= 3">
+                <field name="manufacturer_code" string="Fab." optional="show"/>
+                <field name="depth" string="Niveau" optional="show"/>
+                <field name="family_code" string="Code"/>
+                <field name="family_label" string="Libellé"/>
+                <field name="breadcrumb" string="Arborescence" optional="show"/>
+                <field name="level0_label" string="Marque" optional="show"/>
+                <field name="level1_label" string="Famille" optional="show"/>
+                <field name="level2_label" string="Sous-famille" optional="show"/>
+                <field name="level3_label" string="Catégorie" optional="show"/>
+                <field name="article_count" string="Articles" readonly="1"/>
+                <button name="action_view_articles" string="Voir articles"
+                        type="object" icon="fa-list"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- FORMULAIRE FAMILLE -->
+    <record id="view_qdv_tarif_family_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.family.form</field>
+        <field name="model">qdv.tarif.family</field>
+        <field name="arch" type="xml">
+            <form string="Famille QDV">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-list"
+                                name="action_view_articles" type="object">
+                            <field name="article_count" widget="statinfo" string="Articles"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="family_code" readonly="1"/></h1>
+                        <h3><field name="family_label" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Fabricant">
+                            <field name="base_id" readonly="1"/>
+                            <field name="manufacturer_code" readonly="1"/>
+                        </group>
+                        <group string="Hiérarchie">
+                            <field name="depth" readonly="1" string="Niveau de profondeur"/>
+                            <field name="parent_id" readonly="1"/>
+                            <field name="breadcrumb" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Niveaux">
+                        <field name="level0_label" readonly="1"/>
+                        <field name="level1_label" readonly="1"/>
+                        <field name="level2_label" readonly="1"/>
+                        <field name="level3_label" readonly="1"/>
+                        <field name="level4_label" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- RECHERCHE FAMILLES -->
+    <record id="view_qdv_tarif_family_search" model="ir.ui.view">
+        <field name="name">qdv.tarif.family.search</field>
+        <field name="model">qdv.tarif.family</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="manufacturer_code" string="Fabricant"/>
+                <field name="family_code" string="Code famille"/>
+                <field name="family_label" string="Libellé"/>
+                <field name="level1_label" string="Famille niveau 1"/>
+                <field name="breadcrumb" string="Arborescence"/>
+                <separator/>
+                <filter string="Racine (niveau 0)" name="root" domain="[('depth','=',0)]"/>
+                <filter string="Niveau 1" name="lvl1" domain="[('depth','=',1)]"/>
+                <filter string="Niveau 2" name="lvl2" domain="[('depth','=',2)]"/>
+                <filter string="Niveau 3+" name="lvl3" domain="[('depth','>=',3)]"/>
+                <separator/>
+                <group expand="1" string="Grouper par">
+                    <filter string="Fabricant" name="group_fab" context="{'group_by': 'manufacturer_code'}"/>
+                    <filter string="Niveau 1" name="group_lvl1" context="{'group_by': 'level1_label'}"/>
+                    <filter string="Niveau 2" name="group_lvl2" context="{'group_by': 'level2_label'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_qdv_tarif_family" model="ir.actions.act_window">
+        <field name="name">Familles QDV</field>
+        <field name="res_model">qdv.tarif.family</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_qdv_tarif_family_search"/>
+        <field name="context">{'search_default_group_fab': 1}</field>
+    </record>
+</odoo>

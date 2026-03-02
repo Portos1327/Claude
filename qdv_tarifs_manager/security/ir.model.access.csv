@@ -1,0 +1,27 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_qdv_tarif_config_user,qdv.tarif.config user,model_qdv_tarif_config,base.group_user,1,1,1,0
+access_qdv_tarif_config_manager,qdv.tarif.config manager,model_qdv_tarif_config,base.group_system,1,1,1,1
+access_qdv_tarif_base_user,qdv.tarif.base user,model_qdv_tarif_base,base.group_user,1,1,1,0
+access_qdv_tarif_base_manager,qdv.tarif.base manager,model_qdv_tarif_base,base.group_system,1,1,1,1
+access_qdv_tarif_family_user,qdv.tarif.family user,model_qdv_tarif_family,base.group_user,1,1,1,0
+access_qdv_tarif_family_manager,qdv.tarif.family manager,model_qdv_tarif_family,base.group_system,1,1,1,1
+access_qdv_tarif_rebate_user,qdv.tarif.rebate user,model_qdv_tarif_rebate,base.group_user,1,1,1,0
+access_qdv_tarif_rebate_manager,qdv.tarif.rebate manager,model_qdv_tarif_rebate,base.group_system,1,1,1,1
+access_qdv_tarif_derogation_user,qdv.tarif.derogation user,model_qdv_tarif_derogation,base.group_user,1,1,1,0
+access_qdv_tarif_derogation_manager,qdv.tarif.derogation manager,model_qdv_tarif_derogation,base.group_system,1,1,1,1
+access_qdv_tarif_article_user,qdv.tarif.article user,model_qdv_tarif_article,base.group_user,1,1,1,0
+access_qdv_tarif_article_manager,qdv.tarif.article manager,model_qdv_tarif_article,base.group_system,1,1,1,1
+access_qdv_tarif_file_snapshot_user,qdv.tarif.file.snapshot user,model_qdv_tarif_file_snapshot,base.group_user,1,0,0,0
+access_qdv_tarif_file_snapshot_manager,qdv.tarif.file.snapshot manager,model_qdv_tarif_file_snapshot,base.group_system,1,1,1,1
+access_qdv_tarif_sync_log_user,qdv.tarif.sync.log user,model_qdv_tarif_sync_log,base.group_user,1,0,0,0
+access_qdv_tarif_sync_log_manager,qdv.tarif.sync.log manager,model_qdv_tarif_sync_log,base.group_system,1,1,1,1
+access_qdv_tarif_cron_mixin,qdv.tarif.cron.mixin,model_qdv_tarif_cron_mixin,base.group_system,1,1,1,1
+access_qdv_tarif_discover_wizard,qdv.tarif.discover.wizard,model_qdv_tarif_discover_wizard,base.group_user,1,1,1,1
+access_qdv_tarif_discover_line,qdv.tarif.discover.line,model_qdv_tarif_discover_line,base.group_user,1,1,1,1
+access_qdv_tarif_import_wizard,qdv.tarif.import.wizard,model_qdv_tarif_import_wizard,base.group_user,1,1,1,1
+access_qdv_tarif_scan_result,qdv.tarif.scan.result,model_qdv_tarif_scan_result,base.group_user,1,1,1,1
+access_qdv_tarif_link_wizard,qdv.tarif.link.wizard,model_qdv_tarif_link_wizard,base.group_user,1,1,1,1
+access_qdv_scan_derogation_wizard,qdv.tarif.scan.derogation.wizard,model_qdv_tarif_scan_derogation_wizard,base.group_user,1,1,1,1
+access_qdv_scan_derogation_result,qdv.tarif.scan.derogation.result,model_qdv_tarif_scan_derogation_result,base.group_user,1,1,1,1
+access_qdv_import_derog_wizard,qdv.tarif.import.derogation.wizard,model_qdv_tarif_import_derogation_wizard,base.group_user,1,1,1,1
+access_qdv_import_derog_line,qdv.tarif.import.derogation.line,model_qdv_tarif_import_derogation_line,base.group_user,1,1,1,1

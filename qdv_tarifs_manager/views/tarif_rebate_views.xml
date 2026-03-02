@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- REMISES FAMILLE - liste editable -->
+    <record id="view_qdv_tarif_rebate_list" model="ir.ui.view">
+        <field name="name">qdv.tarif.rebate.list</field>
+        <field name="model">qdv.tarif.rebate</field>
+        <field name="arch" type="xml">
+            <list string="Remises par famille" editable="bottom"
+                  decoration-info="is_default"
+                  decoration-success="use_negotiated and negotiated_value > 0"
+                  decoration-muted="not rebate_value and not negotiated_value">
+                <field name="manufacturer_code" string="Fab." readonly="1" optional="show"/>
+                <field name="rebate_code" string="Code famille" readonly="1"/>
+                <field name="rebate_label" string="Libellé" readonly="1"/>
+                <field name="rebate_value" string="Remise catalogue (%)" readonly="1"
+                       decoration-muted="rebate_value == 0"/>
+                <field name="negotiated_value" string="Remise négociée (%)"
+                       decoration-success="negotiated_value > 0"/>
+                <field name="use_negotiated" string="Utiliser négociée" widget="boolean_toggle"/>
+                <field name="effective_rebate" string="Effective (%)" readonly="1"
+                       decoration-success="effective_rebate > 0"/>
+                <field name="rebate_comment" string="Note" optional="show"/>
+                <field name="article_count" string="Articles" readonly="1" optional="show"/>
+                <button name="action_apply_to_articles" string="Appliquer"
+                        type="object" icon="fa-refresh"
+                        title="Recalcule le prix net de tous les articles de cette famille"/>
+                <button name="action_view_articles" string="Voir articles"
+                        type="object" icon="fa-list"/>
+                <button name="action_export_negotiated_to_qdv" string="📤 QDV"
+                        type="object" icon="fa-upload"
+                        title="Pousse la remise négociée dans Rebates.qdbr"
+                        invisible="not use_negotiated or negotiated_value == 0"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_qdv_tarif_rebate_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.rebate.form</field>
+        <field name="model">qdv.tarif.rebate</field>
+        <field name="arch" type="xml">
+            <form string="Remise Famille QDV">
+                <header>
+                    <button name="action_apply_to_articles" string="Appliquer aux articles"
+                            type="object" class="btn-primary"/>
+                    <button name="action_view_articles" string="Voir les articles"
+                            type="object" class="btn-secondary"/>
+                    <button name="action_export_negotiated_to_qdv"
+                            string="📤 Exporter remise négociée vers QDV"
+                            type="object" class="btn-warning"
+                            title="Écrit DerogationRebate dans Rebates.qdbr (backup automatique)"
+                            invisible="not use_negotiated or negotiated_value == 0"/>
+                    <button name="action_export_all_negotiated"
+                            string="📤 Exporter toutes les remises négociées du fabricant"
+                            type="object" class="btn-secondary"
+                            invisible="not use_negotiated"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-list"
+                                name="action_view_articles" type="object">
+                            <field name="article_count" widget="statinfo" string="Articles"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Remise négociée active" bg_color="bg-success"
+                            invisible="not use_negotiated or not negotiated_value"/>
+                    <div class="oe_title">
+                        <h1><field name="rebate_code" readonly="1" style="font-weight:bold;"/></h1>
+                        <h3><field name="rebate_label" readonly="1"/></h3>
+                    </div>
+                    <group>
+                        <group string="Fabricant">
+                            <field name="base_id" readonly="1"/>
+                            <field name="is_default" readonly="1"/>
+                            <field name="parent_code" readonly="1" invisible="is_default"/>
+                        </group>
+                        <group string="Remises">
+                            <field name="rebate_value" readonly="1"
+                                   string="Catalogue (%) — lecture seule"/>
+                            <field name="negotiated_value" string="Négociée (%) — modifiable"/>
+                            <field name="use_negotiated"/>
+                            <field name="effective_rebate" readonly="1" string="Effective (%)"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="rebate_comment" nolabel="1" placeholder="Notes..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_qdv_tarif_rebate_search" model="ir.ui.view">
+        <field name="name">qdv.tarif.rebate.search</field>
+        <field name="model">qdv.tarif.rebate</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="manufacturer_code" string="Fabricant"/>
+                <field name="rebate_code" string="Code famille"/>
+                <field name="rebate_label" string="Libellé"/>
+                <filter string="Remise négociée active" name="negotiated"
+                        domain="[('use_negotiated','=',True),('negotiated_value','>',0)]"/>
+                <filter string="Remise nulle" name="zero" domain="[('rebate_value','=',0)]"/>
+                <filter string="Familles principales" name="defaults" domain="[('is_default','=',True)]"/>
+                <group expand="1" string="Grouper par">
+                    <filter string="Fabricant" name="group_fab" context="{'group_by': 'manufacturer_code'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_qdv_tarif_rebate" model="ir.actions.act_window">
+        <field name="name">Remises Familles QDV</field>
+        <field name="res_model">qdv.tarif.rebate</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_qdv_tarif_rebate_search"/>
+        <field name="context">{'search_default_group_fab': 1}</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ======== VUE FORMULAIRE CONFIG ======== -->
+    <record id="view_qdv_tarif_config_form" model="ir.ui.view">
+        <field name="name">qdv.tarif.config.form</field>
+        <field name="model">qdv.tarif.config</field>
+        <field name="arch" type="xml">
+            <form string="Configuration QDV Tarifs">
+                <header>
+                    <button name="action_discover_bases"
+                            string="🔍 Découvrir les bases"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_view_bases"
+                            string="📦 Voir les bases"
+                            type="object"
+                            class="btn-secondary"/>
+                    <button name="action_view_articles"
+                            string="📋 Voir les articles"
+                            type="object"
+                            class="btn-secondary"/>
+                    <button name="action_run_cron_now"
+                            string="▶ Vérifier maintenant"
+                            type="object"
+                            class="btn-secondary"
+                            title="Lance immédiatement la vérification des fichiers (identique au CRON quotidien)"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-database"
+                                name="action_view_bases" type="object">
+                            <field name="base_count" widget="statinfo" string="Bases"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-list"
+                                name="action_view_articles" type="object">
+                            <field name="article_count" widget="statinfo" string="Articles"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>Configuration QDV Tarifs Manager</h1>
+                    </div>
+                    <group>
+                        <group string="📁 Chemin dossier">
+                            <field name="tarifs_folder" placeholder="C:\Users\dimitri\Mon Drive\Base QDV\Tarifs ID V2"/>
+                        </group>
+                        <group string="✅ État des fichiers">
+                            <field name="folder_ok" widget="boolean_toggle" readonly="1"/>
+                            <field name="rebates_ok" widget="boolean_toggle" readonly="1"/>
+                            <field name="browser_local_ok" widget="boolean_toggle" readonly="1"/>
+                            <field name="browser_web_ok" widget="boolean_toggle" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Fichiers détectés">
+                        <field name="rebates_file" readonly="1"/>
+                        <field name="browser_local_file" readonly="1"/>
+                        <field name="browser_web_file" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_qdv_tarif_config" model="ir.actions.act_window">
+        <field name="name">Configuration</field>
+        <field name="res_model">qdv.tarif.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+</odoo>
