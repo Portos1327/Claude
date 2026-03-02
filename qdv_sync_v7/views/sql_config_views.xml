@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_qdv_sql_config_form" model="ir.ui.view">
+        <field name="name">qdv.sql.config.form</field>
+        <field name="model">qdv.sql.config</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_connection" string="🔌 Tester connexion" type="object" class="btn-primary"/>
+                    <button name="action_create_database" string="🗄️ Créer base" type="object" class="btn-secondary"/>
+                    <button name="action_list_tables" string="📋 Lister tables" type="object" class="btn-info"/>
+                </header>
+                <sheet>
+                    <group string="Connexion SQL Server">
+                        <group>
+                            <field name="sql_server"/>
+                            <field name="sql_database"/>
+                            <field name="sql_driver"/>
+                        </group>
+                        <group>
+                            <field name="sql_use_windows_auth"/>
+                            <field name="sql_user" invisible="sql_use_windows_auth"/>
+                            <field name="sql_password" password="True" invisible="sql_use_windows_auth"/>
+                        </group>
+                    </group>
+                    <group string="Diagnostic">
+                        <field name="pyodbc_installed"/>
+                        <field name="pyodbc_drivers"/>
+                        <field name="connection_status"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_qdv_sql_config" model="ir.actions.act_window">
+        <field name="name">Configuration SQL Server</field>
+        <field name="res_model">qdv.sql.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+</odoo>

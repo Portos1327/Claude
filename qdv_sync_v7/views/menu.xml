@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_qdv_root" name="Sync QDV7" sequence="100"/>
+    
+    <menuitem id="menu_qdv_supplier" name="Fournisseurs" 
+              parent="menu_qdv_root" action="action_qdv_supplier" sequence="10"/>
+    
+    <menuitem id="menu_qdv_family" name="Familles QDV" 
+              parent="menu_qdv_root" action="action_qdv_family" sequence="20"/>
+    
+    <menuitem id="menu_qdv_config" name="Configuration" parent="menu_qdv_root" sequence="90"/>
+    
+    <menuitem id="menu_qdv_sql_config" name="Configuration SQL Server" 
+              parent="menu_qdv_config" action="action_qdv_sql_config" sequence="10"/>
+</odoo>

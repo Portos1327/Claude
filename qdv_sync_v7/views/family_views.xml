@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- VUE FORMULAIRE FAMILLE -->
+    <record id="view_qdv_family_form" model="ir.ui.view">
+        <field name="name">qdv.family.form</field>
+        <field name="model">qdv.family</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Identification">
+                            <field name="supplier_id" readonly="1"/>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="parent_id" domain="[('supplier_id', '=', supplier_id)]"/>
+                            <field name="level" readonly="1"/>
+                        </group>
+                        <group string="Chemin">
+                            <field name="full_path" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Mapping Odoo">
+                        <div class="alert alert-info" colspan="2">
+                            <p>Entrez les valeurs du champ "famille" Odoo qui correspondent à cette famille QDV, séparées par des virgules.</p>
+                            <p><b>Exemple :</b> U1000R2V, R2V, U-1000 R2V</p>
+                        </div>
+                        <field name="odoo_families" colspan="2" placeholder="U1000R2V, R2V, U-1000 R2V"/>
+                    </group>
+                    
+                    <group string="Sous-familles">
+                        <field name="child_ids" readonly="1" colspan="2" nolabel="1">
+                            <list>
+                                <field name="code"/>
+                                <field name="name"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- VUE LISTE FAMILLE -->
+    <record id="view_qdv_family_list" model="ir.ui.view">
+        <field name="name">qdv.family.list</field>
+        <field name="model">qdv.family</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="supplier_id"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="parent_id"/>
+                <field name="level"/>
+                <field name="odoo_families"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ACTION FAMILLES -->
+    <record id="action_qdv_family" model="ir.actions.act_window">
+        <field name="name">Familles QDV</field>
+        <field name="res_model">qdv.family</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_supplier': 1}</field>
+    </record>
+
+    <!-- RECHERCHE -->
+    <record id="view_qdv_family_search" model="ir.ui.view">
+        <field name="name">qdv.family.search</field>
+        <field name="model">qdv.family</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="supplier_id"/>
+                <field name="odoo_families"/>
+                <group expand="0" string="Grouper par">
+                    <filter name="group_supplier" string="Fournisseur" context="{'group_by': 'supplier_id'}"/>
+                    <filter name="group_parent" string="Famille parente" context="{'group_by': 'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

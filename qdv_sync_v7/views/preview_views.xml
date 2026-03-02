@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- WIZARD PRÉVISUALISATION SYNC QDV -->
+    <record id="view_qdv_sync_preview_form" model="ir.ui.view">
+        <field name="name">qdv.sync.preview.form</field>
+        <field name="model">qdv.sync.preview</field>
+        <field name="arch" type="xml">
+            <form string="Prévisualisation sync QDV">
+                <sheet>
+                    <div class="oe_button_box" name="button_box" invisible="not preview_generated">
+                        <button class="oe_stat_button" icon="fa-list">
+                            <field name="total_records" widget="statinfo" string="Articles source"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-link">
+                            <field name="total_mapped" widget="statinfo" string="Champs mappés"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h2>📋 Prévisualisation — <field name="supplier_id" readonly="1" nolabel="1"/></h2>
+                    </div>
+
+                    <!-- OPTIONS -->
+                    <group string="⚙️ Options de prévisualisation" invisible="preview_generated">
+                        <group>
+                            <field name="max_records" string="Nb articles à afficher"/>
+                            <field name="filter_reference" placeholder="ex: 12345 (optionnel)"/>
+                        </group>
+                        <group>
+                            <field name="show_all_fields"/>
+                        </group>
+                    </group>
+
+                    <!-- BOUTONS ACTIONS -->
+                    <div class="text-center" style="margin: 12px 0;" invisible="preview_generated">
+                        <button name="action_generate_preview" string="🔍 Générer le rapport de prévisualisation"
+                                type="object" class="btn-primary btn-lg"/>
+                    </div>
+
+                    <!-- FILTRES (après génération) -->
+                    <group invisible="not preview_generated" string="🔎 Affiner">
+                        <group>
+                            <field name="max_records" string="Nb articles max"/>
+                            <field name="filter_reference" placeholder="Filtrer par référence..."/>
+                        </group>
+                        <group>
+                            <button name="action_generate_preview" string="🔄 Régénérer"
+                                    type="object" class="btn-secondary"/>
+                        </group>
+                    </group>
+
+                    <!-- RAPPORT HTML -->
+                    <div invisible="not preview_generated">
+                        <field name="report_html" widget="html" readonly="1" nolabel="1"
+                               style="min-height: 300px;"/>
+                    </div>
+
+                    <!-- LISTE DE DÉTAIL (optionnelle) -->
+                    <notebook invisible="not preview_generated">
+                        <page string="📊 Détail par ligne">
+                            <field name="preview_line_ids" readonly="1">
+                                <list decoration-warning="status=='warning'"
+                                      decoration-danger="status=='error'">
+                                    <field name="reference"/>
+                                    <field name="odoo_field" string="Champ Odoo"/>
+                                    <field name="qdv_table" string="Table QDV"/>
+                                    <field name="qdv_column" string="Colonne QDV"/>
+                                    <field name="value" string="Valeur envoyée"/>
+                                    <field name="status" widget="badge"
+                                           decoration-success="status=='ok'"
+                                           decoration-warning="status=='warning'"
+                                           decoration-danger="status=='error'"/>
+                                    <field name="status_msg" string="Info" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Fermer" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

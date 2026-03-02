@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- WIZARD CHAMPS DISPONIBLES -->
+    <record id="view_qdv_fields_wizard_form" model="ir.ui.view">
+        <field name="name">qdv.fields.wizard.form</field>
+        <field name="model">qdv.fields.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Champs disponibles">
+                <group>
+                    <field name="content" widget="text" readonly="1" nolabel="1" 
+                           style="font-family: monospace; white-space: pre; min-height: 400px;"/>
+                </group>
+                <footer>
+                    <button string="Fermer" class="btn-primary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- FORMULAIRE FOURNISSEUR -->
+    <record id="view_qdv_supplier_form" model="ir.ui.view">
+        <field name="name">qdv.supplier.form</field>
+        <field name="model">qdv.supplier</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_sql_table" string="📦 Créer table SQL" type="object" class="btn-secondary" invisible="sql_table_created"/>
+                    <button name="action_add_column_to_sql" string="➕ Colonnes SQL" type="object" class="btn-secondary" invisible="not sql_table_created"/>
+                    <button name="action_sync_sql" string="1️⃣ Odoo → SQL" type="object" class="btn-info"/>
+                    <button name="action_update_qdv" string="2️⃣ MAJ Prix QDV" type="object" class="btn-info" invisible="not qdv_pattern"/>
+                    <button name="action_full_sync_qdv" string="🔄 Sync Complète QDV" type="object" class="btn-primary" invisible="not qdv_pattern"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-folder-open" name="action_view_families" type="object">
+                            <field name="family_count" widget="statinfo" string="Familles QDV"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-file">
+                            <field name="qdv_article_count" widget="statinfo" string="Articles QDV"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-cloud-upload">
+                            <field name="last_sync_count" widget="statinfo" string="Articles SQL"/>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="Table à créer" bg_color="bg-warning" invisible="sql_table_created"/>
+                    
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Nom du fournisseur"/></h1>
+                    </div>
+                    
+                    <group>
+                        <group string="📦 Fournisseur">
+                            <field name="code"/>
+                            <field name="supplier_type" widget="radio"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="🗄️ SQL Server">
+                            <field name="sql_table_name" readonly="1"/>
+                            <field name="sql_table_created" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <group string="📁 Base QDV">
+                            <field name="qdv_folder"/>
+                            <field name="qdv_pattern" placeholder="SERMES_CABLE"/>
+                            <field name="qdv_detected_file" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <!-- ONGLET SOURCE ODOO -->
+                        <page string="🔍 Source Odoo">
+                            <group>
+                                <group string="Modèle source">
+                                    <field name="source_model"/>
+                                    <button name="action_show_available_fields" string="📋 Voir les champs" type="object" class="btn-info"/>
+                                </group>
+                                <group string="Filtre fournisseur" invisible="source_model != 'cable.pricelist.line'">
+                                    <field name="filter_by_supplier"/>
+                                    <field name="filter_supplier_codes" placeholder="ELEN, SERMES" 
+                                           invisible="not filter_by_supplier"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- ONGLET FILTRES FAMILLES -->
+                        <page string="📂 Filtres Familles">
+                            <div class="alert alert-info">
+                                <p><b>Filtrage par famille/sous-famille/fonction</b></p>
+                                <p>Configurez les champs Odoo correspondant aux niveaux de famille, puis détectez automatiquement les valeurs.</p>
+                            </div>
+                            
+                            <group string="Champs Odoo pour les familles">
+                                <group>
+                                    <field name="family_field" placeholder="family, famille_libelle"/>
+                                    <field name="subfamily_field" placeholder="subfamily, sous_famille_libelle"/>
+                                    <field name="function_field" placeholder="fonction_libelle (optionnel)"/>
+                                </group>
+                                <group>
+                                    <field name="family_code_field" placeholder="famille_code"/>
+                                    <field name="subfamily_code_field" placeholder="sous_famille_code"/>
+                                    <field name="function_code_field" placeholder="fonction_code"/>
+                                </group>
+                            </group>
+                            
+                            <group>
+                                <group>
+                                    <field name="filter_by_family"/>
+                                </group>
+                                <group>
+                                    <button name="action_detect_families" string="🔍 Détecter les familles" type="object" class="btn-primary"/>
+                                </group>
+                            </group>
+                            
+                            <field name="family_filter_ids">
+                                <list editable="bottom" decoration-muted="not selected">
+                                    <field name="selected" string="✓"/>
+                                    <field name="family_name"/>
+                                    <field name="subfamily_name"/>
+                                    <field name="function_name"/>
+                                    <field name="full_code" string="Code source"/>
+                                    <field name="qdv_family_code" string="→ Code QDV"/>
+                                    <field name="material_kind_id" string="MaterialKindID"/>
+                                    <field name="article_count" string="Nb"/>
+                                    <field name="level" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- ONGLET MAPPING CHAMPS -->
+                        <page string="🔗 Mapping Champs">
+                            <div class="alert alert-info">
+                                <p><b>Mapping Odoo → QDV</b></p>
+                                <ul>
+                                    <li><b>Scanner QDV</b> : Détecte toutes les colonnes disponibles dans la base QDV</li>
+                                    <li><b>Convertir en code</b> : Utilise la priorité fonction &gt; sous-famille &gt; famille</li>
+                                </ul>
+                            </div>
+                            <group>
+                                <group>
+                                    <button name="action_scan_qdv_columns" string="🔍 Scanner colonnes QDV" type="object" class="btn-primary" invisible="not qdv_pattern"/>
+                                    <button name="action_create_default_mapping" string="📋 Mapping par défaut" type="object" class="btn-secondary"/>
+                                </group>
+                                <group>
+                                    <button name="action_scan_material_kinds" string="🏭 Scanner MaterialKindID" type="object" class="btn-info" invisible="not qdv_pattern"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="user_field_template" string="Template UserDefinedField"/>
+                                    <field name="obsolete_text"/>
+                                </group>
+                                <group>
+                                    <field name="price_field" string="Champ prix Odoo"/>
+                                    <field name="auto_material_kind"/>
+                                </group>
+                            </group>
+                            <field name="field_mapping_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="active"/>
+                                    <field name="qdv_table"/>
+                                    <field name="qdv_column"/>
+                                    <field name="qdv_column_title" optional="show"/>
+                                    <field name="sync_direction"/>
+                                    <field name="value_source"/>
+                                    <field name="odoo_field" placeholder="nom_champ"/>
+                                    <field name="static_value" invisible="value_source != 'static'"/>
+                                    <field name="convert_family_to_code"/>
+                                    <field name="auto_material_kind" optional="hide"/>
+                                    <field name="is_key"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- ONGLET FAMILLES QDV -->
+                        <page string="🏷️ Familles QDV">
+                            <div class="alert alert-info">
+                                <p><b>Familles existantes dans la base QDV</b></p>
+                                <p>Importez depuis QDV puis associez les valeurs Odoo à chaque code.</p>
+                            </div>
+                            <group>
+                                <button name="action_import_families_from_qdv" string="📥 Importer familles depuis QDV" type="object" class="btn-info" invisible="not qdv_pattern"/>
+                                <button name="action_scan_qdv_columns" string="📋 Scanner colonnes QDV" type="object" class="btn-info" invisible="not qdv_pattern"/>
+                                <button name="action_view_families" string="👁️ Voir/Modifier" type="object" class="btn-secondary"/>
+                            </group>
+                            <field name="family_ids" readonly="1">
+                                <list>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="level"/>
+                                    <field name="odoo_families"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- ONGLET OPTIONS -->
+                        <page string="⚙️ Options">
+                            <group string="Création d'articles">
+                                <field name="auto_create_articles"/>
+                                <field name="auto_delete_obsolete"/>
+                                <field name="default_family" invisible="not auto_create_articles"/>
+                            </group>
+                            <group string="MaterialKindID (ID Type FO)">
+                                <field name="auto_material_kind"/>
+                            </group>
+                        </page>
+                        
+                        <!-- ONGLET STATS -->
+                        <page string="📊 Statistiques">
+                            <group>
+                                <group string="SQL Server">
+                                    <field name="last_sync_date"/>
+                                    <field name="last_sync_count"/>
+                                </group>
+                                <group string="Base QDV">
+                                    <field name="last_qdv_update"/>
+                                    <field name="last_qdv_count"/>
+                                    <field name="last_qdv_obsolete"/>
+                                    <field name="last_qdv_read"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <!-- ONGLET HISTORIQUE -->
+                        <page string="📜 Historique">
+                            <field name="sync_log_ids" readonly="1">
+                                <list decoration-danger="status=='error'" decoration-success="status=='success'">
+                                    <field name="log_type"/>
+                                    <field name="sync_start"/>
+                                    <field name="duration"/>
+                                    <field name="records_processed"/>
+                                    <field name="records_created"/>
+                                    <field name="records_updated"/>
+                                    <field name="records_errors" string="Erreurs"/>
+                                    <field name="status" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- LISTE FOURNISSEURS -->
+    <record id="view_qdv_supplier_list" model="ir.ui.view">
+        <field name="name">qdv.supplier.list</field>
+        <field name="model">qdv.supplier</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="supplier_type"/>
+                <field name="source_model"/>
+                <field name="sql_table_created" widget="boolean"/>
+                <field name="family_count"/>
+                <field name="qdv_article_count"/>
+                <field name="last_sync_date"/>
+                <field name="last_qdv_update"/>
+            </list>
+        </field>
+    </record>
+    
+    <record id="action_qdv_supplier" model="ir.actions.act_window">
+        <field name="name">Fournisseurs</field>
+        <field name="res_model">qdv.supplier</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Configuration SQL par défaut -->
+    <record id="default_sql_config" model="qdv.sql.config">
+        <field name="name">Configuration SQL Server</field>
+        <field name="sql_server">localhost\SQL_QDV</field>
+        <field name="sql_database">Odoo_QDV</field>
+        <field name="sql_user">odoo_sync</field>
+        <field name="sql_password">OdooQDV2025!</field>
+        <field name="sql_driver">18</field>
+    </record>
+    
+    <!-- Fournisseurs par défaut -->
+    <record id="supplier_sermes" model="qdv.supplier">
+        <field name="name">SERMES</field>
+        <field name="code">SERMES</field>
+        <field name="supplier_type">cable</field>
+        <field name="qdv_pattern">SERMES_CABLE</field>
+        <field name="source_model">cable.pricelist.line</field>
+    </record>
+    
+    <record id="supplier_elen" model="qdv.supplier">
+        <field name="name">ELEN Distribution</field>
+        <field name="code">ELEN</field>
+        <field name="supplier_type">cable</field>
+        <field name="qdv_pattern">ELEN_CABLE</field>
+        <field name="source_model">cable.pricelist.line</field>
+    </record>
+    
+    <record id="supplier_rexel" model="qdv.supplier">
+        <field name="name">REXEL</field>
+        <field name="code">REXEL</field>
+        <field name="supplier_type">cable</field>
+        <field name="qdv_pattern">REXEL_CABLE</field>
+        <field name="source_model">rexel.article</field>
+    </record>
+</odoo>

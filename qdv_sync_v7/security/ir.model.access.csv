@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_qdv_sql_config,qdv.sql.config,model_qdv_sql_config,base.group_user,1,1,1,1
+access_qdv_supplier,qdv.supplier,model_qdv_supplier,base.group_user,1,1,1,1
+access_qdv_field_mapping,qdv.field.mapping,model_qdv_field_mapping,base.group_user,1,1,1,1
+access_qdv_family_filter,qdv.family.filter,model_qdv_family_filter,base.group_user,1,1,1,1
+access_qdv_sync_log,qdv.sync.log,model_qdv_sync_log,base.group_user,1,1,1,1
+access_qdv_family,qdv.family,model_qdv_family,base.group_user,1,1,1,1
+access_qdv_fields_wizard,qdv.fields.wizard,model_qdv_fields_wizard,base.group_user,1,1,1,1
