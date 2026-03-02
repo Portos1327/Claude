@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Configuration par défaut (singleton) -->
+    <record id="qdv_ouvrage_config_default" model="qdv.ouvrage.config">
+        <field name="name">Configuration QDV Ouvrages</field>
+        <field name="discovery_folder">C:/Users/dimitri/Mon Drive/Base QDV/Base article et ouvrage</field>
+        <field name="scan_recursive" eval="True"/>
+        <field name="auto_import_new" eval="False"/>
+        <field name="cron_active" eval="False"/>
+        <field name="cron_interval">daily</field>
+    </record>
+
+    <!-- CRON de surveillance du dossier -->
+    <record id="ir_cron_qdv_ouvrage_scan" model="ir.cron">
+        <field name="name">QDV Ouvrages: Surveillance dossier .grp</field>
+        <field name="model_id" ref="model_qdv_ouvrage_config"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_scan_and_import()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="False"/>
+    </record>
+
+</odoo>

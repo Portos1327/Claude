@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_qdv_ouvrage_config,qdv.ouvrage.config,model_qdv_ouvrage_config,,1,1,1,1
+access_qdv_ouvrage_base,qdv.ouvrage.base,model_qdv_ouvrage_base,,1,1,1,1
+access_qdv_ouvrage_famille,qdv.ouvrage.famille,model_qdv_ouvrage_famille,,1,1,1,1
+access_qdv_ouvrage,qdv.ouvrage,model_qdv_ouvrage,,1,1,1,1
+access_qdv_ouvrage_minute,qdv.ouvrage.minute,model_qdv_ouvrage_minute,,1,1,1,1
+access_qdv_import_grp_wizard,qdv.import.grp.wizard,model_qdv_import_grp_wizard,,1,1,1,1
+access_qdv_export_grp_wizard,qdv.export.grp.wizard,model_qdv_export_grp_wizard,,1,1,1,1
+access_qdv_discovery_wizard,qdv.discovery.wizard,model_qdv_discovery_wizard,,1,1,1,1
+access_qdv_discovered_file,qdv.discovered.file,model_qdv_discovered_file,,1,1,1,1
+access_qdv_replace_article_wizard,qdv.replace.article.wizard,model_qdv_replace_article_wizard,,1,1,1,1
+access_qdv_picker_article_wizard,qdv.picker.article.wizard,model_qdv_picker_article_wizard,,1,1,1,1
+access_qdv_picker_sync_result,qdv.picker.sync.result,model_qdv_picker_sync_result,,1,1,1,1
+access_qdv_picker_selection_line,qdv.picker.selection.line,model_qdv_picker_selection_line,,1,1,1,1
+access_qdv_creer_ouvrage_wizard,qdv.creer.ouvrage.wizard,model_qdv_creer_ouvrage_wizard,,1,1,1,1
+access_qdv_creer_ouvrage_ligne,qdv.creer.ouvrage.ligne,model_qdv_creer_ouvrage_ligne,,1,1,1,1

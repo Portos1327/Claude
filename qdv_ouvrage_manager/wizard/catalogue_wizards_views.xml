@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         PICKER D'ARTICLES — recherche dans qdv_tarifs_manager / qdv_sync
+         
+         IMPORTANT : tarif_result_ids pointe vers qdv.tarif.article qui est
+         dans un module optionnel (qdv_tarifs_manager). On ne peut pas définir
+         de vue inline avec des champs de ce modèle — Odoo ne peut pas valider
+         des champs d'un modèle externe non déclaré dans depends.
+         
+         Solution : on affiche uniquement la liste standard sans vue inline,
+         ou on utilise un modèle transient intermédiaire.
+         On utilise ici sync_result_ids (modèle local) pour les deux sources.
+    ================================================================ -->
+
+    <record id="qdv_picker_article_wizard_view" model="ir.ui.view">
+        <field name="name">qdv.picker.article.wizard.form</field>
+        <field name="model">qdv.picker.article.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Ajouter des articles depuis les bases QDV">
+
+                <header>
+                    <button name="action_rechercher"
+                            string="🔍 Rechercher"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'search'"/>
+                    <button name="action_inserer"
+                            string="✅ Insérer dans l'ouvrage"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'select'"/>
+                    <button name="action_retour_recherche"
+                            string="← Nouvelle recherche"
+                            type="object"
+                            invisible="state != 'select'"/>
+                    <button name="action_vider_selection"
+                            string="🗑 Vider la sélection"
+                            type="object"
+                            invisible="state != 'select'"/>
+                    <button string="Fermer"
+                            special="cancel"
+                            invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="search,select,done"/>
+                </header>
+
+                <sheet>
+                    <div class="oe_title">
+                        <h2>
+                            <field name="ouvrage_id" readonly="1"/>
+                        </h2>
+                    </div>
+
+                    <!-- ═══════════ ÉTAPE 1 : RECHERCHE ═══════════ -->
+                    <group invisible="state != 'search'">
+                        <group string="Source QDV">
+                            <field name="source" widget="radio"
+                                   options="{'horizontal': false}"/>
+                        </group>
+                        <group string="Critères de recherche">
+                            <field name="recherche_texte"
+                                   placeholder="Référence ou désignation..."/>
+                            <field name="filtre_famille"
+                                   placeholder="Ex: Câbles, Disjoncteurs..."/>
+                        </group>
+                    </group>
+
+                    <!-- ═══════════ ÉTAPE 2 : SÉLECTION ═══════════ -->
+                    <div invisible="state != 'select'">
+
+                        <!-- Compteurs -->
+                        <div class="row mb-2">
+                            <div class="col-6">
+                                <span class="badge text-bg-info">
+                                    <field name="result_count"/> résultat(s)
+                                </span>
+                            </div>
+                            <div class="col-6 text-end">
+                                <span class="badge text-bg-success">
+                                    <field name="selection_count"/> sélectionné(s)
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Résultats unifiés (tarif fabricant OU base perso) -->
+                        <!-- Tous les résultats passent par qdv.picker.sync.result -->
+                        <group string="Résultats trouvés"
+                               invisible="not sync_result_ids">
+                            <field name="sync_result_ids" nolabel="1">
+                                <list>
+                                    <field name="qdb_filename" string="Base .qdb"
+                                           optional="show"/>
+                                    <field name="reference"/>
+                                    <field name="designation"/>
+                                    <field name="famille" optional="show"/>
+                                    <field name="fabricant" optional="show"/>
+                                    <field name="unite" optional="show"/>
+                                    <field name="prix" string="Prix"
+                                           digits="[12,4]"/>
+                                    <button name="action_ajouter_sync"
+                                            string="➕"
+                                            type="object"
+                                            
+                                            title="Ajouter à la sélection"/>
+                                </list>
+                            </field>
+                        </group>
+
+                        <!-- Sélection courante -->
+                        <group string="Articles à insérer"
+                               invisible="not selection_ids">
+                            <field name="selection_ids" nolabel="1">
+                                <list editable="bottom"
+                                      decoration-success="base_source != False">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="quantite" width="70"/>
+                                    <field name="reference" readonly="1"/>
+                                    <field name="designation"/>
+                                    <field name="fabricant" optional="show"/>
+                                    <field name="unite" optional="show"/>
+                                    <field name="prix_net" string="Prix net"
+                                           digits="[12,4]" readonly="1"/>
+                                    <field name="base_source" optional="show"
+                                           readonly="1"/>
+                                    <field name="source_label" optional="show"
+                                           readonly="1"/>
+                                </list>
+                            </field>
+                        </group>
+
+                    </div>
+
+                    <!-- ═══════════ ÉTAPE 3 : DONE ═══════════════ -->
+                    <group invisible="state != 'done'">
+                        <div class="alert alert-success" role="alert">
+                            <h4>✅ <field name="inserted_count" readonly="1"/> articles insérés</h4>
+                            <field name="result_log" widget="text" readonly="1"
+                                   style="font-family: monospace; font-size: 0.85em;"/>
+                        </div>
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action picker -->
+    <record id="qdv_picker_article_action" model="ir.actions.act_window">
+        <field name="name">Ajouter des articles</field>
+        <field name="res_model">qdv.picker.article.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ================================================================
+         WIZARD CRÉATION D'OUVRAGE DE ZÉRO
+    ================================================================ -->
+
+    <record id="qdv_creer_ouvrage_wizard_view" model="ir.ui.view">
+        <field name="name">qdv.creer.ouvrage.wizard.form</field>
+        <field name="model">qdv.creer.ouvrage.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Créer un nouvel ouvrage">
+                <header>
+                    <button name="action_etape_composition"
+                            string="Suivant →"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'metadonnees'"/>
+                    <button name="action_creer_ouvrage"
+                            string="✅ Créer l'ouvrage"
+                            type="object"
+                            class="btn-success"
+                            invisible="state != 'composition'"/>
+                    <button name="action_retour_metadonnees"
+                            string="← Retour"
+                            type="object"
+                            invisible="state != 'composition'"/>
+                    <button string="Fermer"
+                            special="cancel"
+                            invisible="state == 'done'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="metadonnees,composition,done"/>
+                </header>
+
+                <sheet>
+                    <!-- ─── Étape 1 : Métadonnées ─── -->
+                    <group invisible="state != 'metadonnees'">
+                        <group string="Base de destination">
+                            <field name="base_id"/>
+                        </group>
+                        <group string="Identification de l'ouvrage">
+                            <field name="reference"/>
+                            <field name="description"/>
+                            <field name="famille_code"/>
+                            <field name="unit"/>
+                            <field name="manufacturer"/>
+                        </group>
+                        <group string="Prix">
+                            <field name="forced_selling_price"/>
+                            <field name="take_forced_price"/>
+                            <field name="lock_the_group"/>
+                        </group>
+                    </group>
+
+                    <!-- ─── Étape 2 : Composition ─── -->
+                    <div invisible="state != 'composition'">
+                        <div class="alert alert-info" role="alert">
+                            <strong>Ouvrage :</strong>
+                            <field name="reference" readonly="1"/> —
+                            <field name="description" readonly="1"/>
+                        </div>
+
+                        <group string="Composition (lignes)">
+                            <field name="ligne_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="type_ligne"/>
+                                    <field name="quantite"/>
+                                    <field name="reference"/>
+                                    <field name="description"/>
+                                    <field name="fabricant" optional="show"/>
+                                    <field name="famille" optional="show"/>
+                                    <field name="base_source"
+                                           help="Nom exact du .qdb — QDV7 s'en sert pour retrouver les prix"/>
+                                </list>
+                            </field>
+                        </group>
+                    </div>
+
+                    <!-- ─── Étape 3 : Done ─── -->
+                    <group invisible="state != 'done'">
+                        <div class="alert alert-success" role="alert">
+                            <h4>✅ Ouvrage créé</h4>
+                            <field name="result_log" widget="text" readonly="1"
+                                   style="font-family: monospace; font-size: 0.85em;"/>
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="qdv_creer_ouvrage_action" model="ir.actions.act_window">
+        <field name="name">Créer un ouvrage</field>
+        <field name="res_model">qdv.creer.ouvrage.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

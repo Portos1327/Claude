@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- FORM VIEW - Configuration -->
+    <record id="qdv_ouvrage_config_form_view" model="ir.ui.view">
+        <field name="name">qdv.ouvrage.config.form</field>
+        <field name="model">qdv.ouvrage.config</field>
+        <field name="arch" type="xml">
+            <form string="Configuration QDV Ouvrage Manager">
+                <header>
+                    <button name="action_test_folder"
+                            string="🧪 Tester le dossier"
+                            type="object"
+                            class="btn-secondary"/>
+                    <button name="action_open_discovery_wizard"
+                            string="🔍 Découvrir les bases"
+                            type="object"
+                            class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>⚙️ Configuration QDV Ouvrage Manager</h1>
+                    </div>
+
+                    <group>
+                        <group string="📁 Dossier de découverte">
+                            <field name="discovery_folder"
+                                   placeholder="C:\Users\dimitri\Mon Drive\Base QDV\Base article et ouvrage"/>
+                            <field name="scan_recursive"/>
+                            <field name="auto_import_new"/>
+                        </group>
+                        <group string="🕒 Surveillance automatique">
+                            <field name="cron_active"/>
+                            <field name="cron_interval"
+                                   invisible="not cron_active"/>
+                        </group>
+                    </group>
+
+                    <group string="📊 Dernier scan" invisible="not last_scan_date">
+                        <group>
+                            <field name="last_scan_date" readonly="1"/>
+                            <field name="last_scan_found" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <field name="last_scan_log"
+                           invisible="not last_scan_log"
+                           readonly="1"
+                           widget="text"
+                           string="Rapport du dernier scan"
+                           style="font-family: monospace; font-size: 11px; background: #f8f9fa; padding: 8px;"/>
+
+                    <!-- Aide contextuelle -->
+                    <div class="alert alert-info" role="alert">
+                        <h5>💡 Comment utiliser la découverte automatique ?</h5>
+                        <p>
+                            <strong>1.</strong> Configurez le chemin du dossier contenant vos fichiers
+                            <code>.grp</code> (ex: votre dossier Google Drive synchronisé).<br/>
+                            <strong>2.</strong> Cliquez sur <em>"🔍 Découvrir les bases"</em> pour scanner
+                            et lister tous les fichiers trouvés.<br/>
+                            <strong>3.</strong> Sélectionnez les bases à importer et cliquez
+                            <em>"📥 Importer la sélection"</em>.<br/>
+                            <strong>4.</strong> Optionnel : activez la surveillance automatique pour
+                            détecter les nouveaux fichiers périodiquement.
+                        </p>
+                        <p class="mb-0">
+                            <strong>Dossier par défaut :</strong>
+                            <code>C:\Users\dimitri\Mon Drive\Base QDV\Base article et ouvrage</code>
+                        </p>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACTION CONFIGURATION -->
+    <record id="qdv_ouvrage_config_action" model="ir.actions.act_window">
+        <field name="name">Configuration</field>
+        <field name="res_model">qdv.ouvrage.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">main</field>
+        <field name="context">{'create': False}</field>
+    </record>
+
+    <!-- ACTION SERVEUR pour ouvrir la config unique -->
+    <record id="qdv_ouvrage_config_open_action" model="ir.actions.server">
+        <field name="name">Ouvrir la configuration QDV</field>
+        <field name="model_id" ref="model_qdv_ouvrage_config"/>
+        <field name="state">code</field>
+        <field name="code">
+config = model.get_or_create_config()
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Configuration QDV Ouvrages',
+    'res_model': 'qdv.ouvrage.config',
+    'res_id': config.id,
+    'view_mode': 'form',
+    'target': 'main',
+}
+        </field>
+    </record>
+
+</odoo>

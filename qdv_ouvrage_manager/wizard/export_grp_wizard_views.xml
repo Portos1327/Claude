@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="qdv_export_grp_wizard_form_view" model="ir.ui.view">
+        <field name="name">qdv.export.grp.wizard.form</field>
+        <field name="model">qdv.export.grp.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Exporter vers QDV7 (JSON)">
+                <sheet>
+                    <!-- Configuration -->
+                    <group invisible="state != 'draft'">
+                        <group string="Paramètres d'export">
+                            <field name="base_id" readonly="state != 'draft'"/>
+                            <field name="export_mode" readonly="state != 'draft'"/>
+                        </group>
+                        <group string="💡 Instructions">
+                            <div colspan="2">
+                                <p>
+                                    L'export génère un fichier <strong>JSON</strong> contenant
+                                    les modifications apportées dans Odoo.
+                                </p>
+                                <p>
+                                    Ce fichier doit être importé dans QDV7 via le
+                                    <strong>macro VB.NET</strong> fourni
+                                    (<em>ImportOdooChanges.bas</em>).
+                                </p>
+                            </div>
+                        </group>
+                    </group>
+
+                    <!-- Résultats -->
+                    <group invisible="state != 'done'" string="✅ Export terminé">
+                        <field name="export_count" readonly="1"/>
+                        <field name="json_file"
+                               widget="binary"
+                               filename="json_filename"
+                               string="Télécharger le fichier JSON"
+                               readonly="1"/>
+                        <field name="json_filename" invisible="1"/>
+                    </group>
+                    <field name="result_log"
+                           invisible="state != 'done'"
+                           readonly="1"
+                           widget="text"
+                           style="font-family: monospace; background: #f5f5f5; padding: 10px;"/>
+                </sheet>
+                <footer>
+                    <button name="action_export"
+                            string="📤 Exporter"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button string="Fermer"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

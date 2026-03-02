@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         FORM VIEW - Ouvrage
+    ============================================================ -->
+    <record id="qdv_ouvrage_form_view" model="ir.ui.view">
+        <field name="name">qdv.ouvrage.form</field>
+        <field name="model">qdv.ouvrage</field>
+        <field name="arch" type="xml">
+            <form string="Ouvrage QDV7">
+                <header>
+                    <button name="action_mark_unmodified"
+                            string="✅ Marquer comme synchronisé"
+                            type="object"
+                            invisible="not is_modified"
+                            class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon"
+                            title="Modifié"
+                            invisible="not is_modified"
+                            bg_color="bg-warning"/>
+                    <div class="oe_title">
+                        <label for="description"/>
+                        <h1>
+                            <field name="description"
+                                   placeholder="Description de l'ouvrage..."/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Identification QDV7">
+                            <field name="reference"/>
+                            <field name="famille_code"/>
+                            <field name="famille_id"/>
+                            <field name="unit"/>
+                            <field name="manufacturer"/>
+                            <field name="user_defined_field"/>
+                        </group>
+                        <group string="Prix">
+                            <field name="forced_selling_price"
+                                   widget="monetary"
+                                   options="{'currency_field': False}"/>
+                            <field name="take_forced_price"/>
+                            <field name="lock_the_group"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Traçabilité QDV7">
+                            <field name="qdv_row_id" readonly="1"/>
+                            <field name="article_date" readonly="1"/>
+                            <field name="alter_date" readonly="1"/>
+                            <field name="last_user_information" readonly="1"/>
+                            <field name="base_id" readonly="1"/>
+                        </group>
+                        <group string="Traçabilité Odoo">
+                            <field name="is_modified" readonly="1" widget="boolean_toggle"/>
+                            <field name="odoo_modify_date" readonly="1"/>
+                            <field name="odoo_modify_uid" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Notes Odoo" name="notes">
+                            <field name="notes_odoo"
+                                   placeholder="Notes internes Odoo (non synchronisées vers QDV7)..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         LIST VIEW - Ouvrage
+    ============================================================ -->
+    <record id="qdv_ouvrage_list_view" model="ir.ui.view">
+        <field name="name">qdv.ouvrage.list</field>
+        <field name="model">qdv.ouvrage</field>
+        <field name="arch" type="xml">
+            <list string="Ouvrages QDV7"
+                  editable="bottom"
+                  decoration-warning="is_modified"
+                  decoration-muted="lock_the_group">
+                <field name="famille_code" optional="show"/>
+                <field name="famille_libelle" optional="show"/>
+                <field name="reference"/>
+                <field name="description"/>
+                <field name="unit"/>
+                <field name="manufacturer" optional="hide"/>
+                <field name="forced_selling_price" optional="hide"/>
+                <field name="take_forced_price" widget="boolean_toggle" optional="hide"/>
+                <field name="lock_the_group" widget="boolean_toggle" optional="hide"/>
+                <field name="is_modified" widget="boolean_toggle" optional="show"/>
+                <field name="odoo_modify_date" optional="hide"/>
+                <field name="base_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         SEARCH VIEW - Ouvrage
+    ============================================================ -->
+    <record id="qdv_ouvrage_search_view" model="ir.ui.view">
+        <field name="name">qdv.ouvrage.search</field>
+        <field name="model">qdv.ouvrage</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher un ouvrage">
+                <field name="description" string="Description / Référence"
+                       filter_domain="['|', ('description', 'ilike', self), ('reference', 'ilike', self)]"/>
+                <field name="reference" string="Référence exacte"/>
+                <field name="famille_code"/>
+                <field name="famille_id"/>
+                <field name="manufacturer"/>
+                <field name="base_id"/>
+
+                <!-- Filtres rapides -->
+                <separator/>
+                <filter string="🔶 Modifiés dans Odoo"
+                        name="filter_modified"
+                        domain="[('is_modified', '=', True)]"/>
+                <filter string="🔒 Verrouillés"
+                        name="filter_locked"
+                        domain="[('lock_the_group', '=', True)]"/>
+                <filter string="💰 Avec PV forcé"
+                        name="filter_forced_price"
+                        domain="[('forced_selling_price', '>', 0)]"/>
+                <separator/>
+                <filter string="Unité ML"
+                        name="filter_ml"
+                        domain="[('unit', 'ilike', 'ml')]"/>
+                <filter string="Unité U"
+                        name="filter_u"
+                        domain="[('unit', 'ilike', 'u')]"/>
+
+                <!-- Groupements -->
+                <group expand="0" string="Grouper par">
+                    <filter string="Famille" name="group_famille"
+                            context="{'group_by': 'famille_id'}"/>
+                    <filter string="Code famille" name="group_famille_code"
+                            context="{'group_by': 'famille_code'}"/>
+                    <filter string="Base d'ouvrage" name="group_base"
+                            context="{'group_by': 'base_id'}"/>
+                    <filter string="Unité" name="group_unit"
+                            context="{'group_by': 'unit'}"/>
+                    <filter string="Modifié" name="group_modified"
+                            context="{'group_by': 'is_modified'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         ACTION - Ouvrages (tous)
+    ============================================================ -->
+    <record id="qdv_ouvrage_action" model="ir.actions.act_window">
+        <field name="name">Ouvrages</field>
+        <field name="res_model">qdv.ouvrage</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="qdv_ouvrage_search_view"/>
+        <field name="context">{'search_default_filter_modified': 0}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun ouvrage trouvé
+            </p>
+            <p>
+                Importez d'abord une base d'ouvrage depuis le menu
+                <strong>Bases d'ouvrage</strong>.
+            </p>
+        </field>
+    </record>
+
+    <!-- ACTION - Ouvrages modifiés seulement -->
+    <record id="qdv_ouvrage_modified_action" model="ir.actions.act_window">
+        <field name="name">Ouvrages modifiés</field>
+        <field name="res_model">qdv.ouvrage</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_modified', '=', True)]</field>
+        <field name="search_view_id" ref="qdv_ouvrage_search_view"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun ouvrage modifié
+            </p>
+            <p>Tous vos ouvrages sont synchronisés avec QDV7.</p>
+        </field>
+    </record>
+
+</odoo>

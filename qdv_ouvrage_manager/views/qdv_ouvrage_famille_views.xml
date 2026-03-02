@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- FORM VIEW - Famille -->
+    <record id="qdv_ouvrage_famille_form_view" model="ir.ui.view">
+        <field name="name">qdv.ouvrage.famille.form</field>
+        <field name="model">qdv.ouvrage.famille</field>
+        <field name="arch" type="xml">
+            <form string="Famille d'ouvrage">
+                <sheet>
+                    <group>
+                        <group string="Identification">
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="level" readonly="1"/>
+                            <field name="parent_id" readonly="1"/>
+                        </group>
+                        <group string="Base">
+                            <field name="base_id"/>
+                            <field name="qdv_row_id" readonly="1"/>
+                            <field name="ouvrage_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="child_ids" string="Sous-familles" readonly="1">
+                        <list>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="ouvrage_count"/>
+                        </list>
+                    </field>
+                    <field name="ouvrage_ids" string="Ouvrages" readonly="1">
+                        <list>
+                            <field name="reference"/>
+                            <field name="description"/>
+                            <field name="unit"/>
+                            <field name="is_modified" widget="boolean_toggle"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- LIST VIEW - Famille -->
+    <record id="qdv_ouvrage_famille_list_view" model="ir.ui.view">
+        <field name="name">qdv.ouvrage.famille.list</field>
+        <field name="model">qdv.ouvrage.famille</field>
+        <field name="arch" type="xml">
+            <list string="Familles d'ouvrage">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="level"/>
+                <field name="parent_id"/>
+                <field name="ouvrage_count"/>
+                <field name="base_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW - Famille -->
+    <record id="qdv_ouvrage_famille_search_view" model="ir.ui.view">
+        <field name="name">qdv.ouvrage.famille.search</field>
+        <field name="model">qdv.ouvrage.famille</field>
+        <field name="arch" type="xml">
+            <search string="Rechercher une famille">
+                <field name="code"/>
+                <field name="name"/>
+                <field name="base_id"/>
+                <group expand="0" string="Grouper par">
+                    <filter string="Base" name="group_base" context="{'group_by': 'base_id'}"/>
+                    <filter string="Niveau" name="group_level" context="{'group_by': 'level'}"/>
+                    <filter string="Famille parente" name="group_parent" context="{'group_by': 'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="qdv_ouvrage_famille_action" model="ir.actions.act_window">
+        <field name="name">Familles d'ouvrage</field>
+        <field name="res_model">qdv.ouvrage.famille</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

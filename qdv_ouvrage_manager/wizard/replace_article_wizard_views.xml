@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="qdv_replace_article_wizard_view" model="ir.ui.view">
+        <field name="name">qdv.replace.article.wizard.form</field>
+        <field name="model">qdv.replace.article.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Remplacement en masse d'articles">
+                <sheet>
+
+                    <!-- ═══════════════════════════════════════════════
+                         ÉTAPE 1 : RECHERCHE
+                    ═══════════════════════════════════════════════ -->
+                    <group invisible="state != 'search'">
+                        <group string="🔍 Étape 1 — Rechercher l'article à remplacer">
+                            <field name="base_id"
+                                   options="{'no_create': True}"
+                                   placeholder="Toutes les bases (laisser vide)"/>
+                            <field name="search_type" widget="radio"/>
+                            <field name="search_value"
+                                   placeholder="Ex: R2V5G10T500  ou  câble 5G10"/>
+                        </group>
+                        <group string="ℹ️ Aide">
+                            <div class="text-muted">
+                                <p>Recherchez un article présent dans vos ouvrages.</p>
+                                <p>Après la recherche, vous verrez tous les ouvrages
+                                   concernés avant d'effectuer le remplacement.</p>
+                                <p><strong>Prérequis :</strong> Les articles doivent avoir été
+                                   chargés via "📋 Charger les articles" sur chaque ouvrage.</p>
+                            </div>
+                        </group>
+                    </group>
+                    <footer invisible="state != 'search'">
+                        <button name="action_search"
+                                string="🔍 Rechercher"
+                                type="object"
+                                class="btn-primary"/>
+                        <button string="Annuler"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+
+                    <!-- ═══════════════════════════════════════════════
+                         ÉTAPE 2 : APERÇU + SAISIE DU REMPLACEMENT
+                    ═══════════════════════════════════════════════ -->
+                    <div invisible="state != 'preview'">
+
+                        <!-- Résumé de la recherche -->
+                        <div class="alert alert-info">
+                            <strong>🔍 Recherche :</strong>
+                            <field name="search_value" readonly="1" nolabel="1"/> —
+                            <field name="found_count" readonly="1" nolabel="1"/>
+                            occurrence(s) dans
+                            <field name="found_ouvrage_count" readonly="1" nolabel="1"/>
+                            ouvrage(s)
+                        </div>
+
+                        <!-- Liste des articles trouvés -->
+                        <field name="found_minute_ids" readonly="1" nolabel="1">
+                            <list string="Articles à remplacer"
+                                  decoration-warning="is_modified">
+                                <field name="base_id" string="Base" optional="show"/>
+                                <field name="ouvrage_id" string="Ouvrage"/>
+                                <field name="quantite" string="Qté"/>
+                                <field name="description"/>
+                                <field name="reference"/>
+                                <field name="fabricant" optional="show"/>
+                                <field name="base_source" string="Base QDV" optional="show"/>
+                                <field name="is_modified" invisible="1"/>
+                            </list>
+                        </field>
+
+                        <!-- Formulaire de remplacement -->
+                        <separator string="🔄 Données du remplacement"/>
+                        <group>
+                            <group string="Mode de remplacement">
+                                <field name="replace_mode" widget="radio"/>
+                            </group>
+                        </group>
+
+                        <!-- Champs selon le mode -->
+                        <group invisible="replace_mode == 'description_only' or replace_mode == 'quantite_only'">
+                            <group string="Référence">
+                                <field name="new_reference"
+                                       placeholder="Nouvelle référence article"/>
+                            </group>
+                        </group>
+
+                        <group invisible="replace_mode == 'reference_only' or replace_mode == 'quantite_only'">
+                            <group string="Description">
+                                <field name="new_description"
+                                       placeholder="Nouvelle description"/>
+                            </group>
+                        </group>
+
+                        <group invisible="replace_mode != 'quantite_only' and replace_mode != 'full'">
+                            <group string="Quantité">
+                                <field name="new_quantite"/>
+                            </group>
+                        </group>
+
+                        <group invisible="replace_mode != 'full'">
+                            <group string="Autres champs (optionnel)">
+                                <field name="new_fabricant"
+                                       placeholder="Laisser vide = ne pas modifier"/>
+                                <field name="new_famille"
+                                       placeholder="Laisser vide = ne pas modifier"/>
+                                <field name="new_base_source"
+                                       placeholder="Laisser vide = ne pas modifier"/>
+                                <field name="new_champ_utilisateur"
+                                       placeholder="Laisser vide = ne pas modifier"/>
+                            </group>
+                        </group>
+
+                        <div class="alert alert-warning mt-2">
+                            <strong>⚠️ Attention :</strong>
+                            Cette opération va modifier
+                            <strong>
+                                <field name="found_count" readonly="1" nolabel="1"/>
+                                article(s)
+                            </strong>
+                            dans
+                            <strong>
+                                <field name="found_ouvrage_count" readonly="1" nolabel="1"/>
+                                ouvrage(s)
+                            </strong>.
+                            Les ouvrages concernés seront marqués comme <em>Modifiés</em>.
+                            Cette action est irréversible depuis Odoo
+                            (le fichier .grp original reste intact).
+                        </div>
+
+                    </div>
+
+                    <footer invisible="state != 'preview'">
+                        <button name="action_replace"
+                                string="✅ Confirmer le remplacement"
+                                type="object"
+                                class="btn-primary"
+                                confirm="Confirmer le remplacement en masse ? Cette action modifiera tous les articles trouvés."/>
+                        <button name="action_back_to_search"
+                                string="← Nouvelle recherche"
+                                type="object"
+                                class="btn-secondary"/>
+                        <button string="Annuler"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+
+                    <!-- ═══════════════════════════════════════════════
+                         ÉTAPE 3 : RÉSULTAT
+                    ═══════════════════════════════════════════════ -->
+                    <div invisible="state != 'done'">
+                        <div class="alert alert-success">
+                            <strong>✅ Remplacement effectué !</strong>
+                            <field name="replaced_count" readonly="1" nolabel="1"/>
+                            article(s) mis à jour.
+                        </div>
+                        <field name="result_log" readonly="1" nolabel="1"
+                               widget="text"
+                               style="font-family: monospace; font-size: 12px;"/>
+                    </div>
+
+                    <footer invisible="state != 'done'">
+                        <button name="action_back_to_search"
+                                string="🔍 Nouveau remplacement"
+                                type="object"
+                                class="btn-primary"/>
+                        <button string="Fermer"
+                                class="btn-secondary"
+                                special="cancel"/>
+                    </footer>
+
+                    <!-- Champs état (toujours présents mais cachés) -->
+                    <field name="state" invisible="1"/>
+                    <field name="found_count" invisible="1"/>
+                    <field name="found_ouvrage_count" invisible="1"/>
+                    <field name="replaced_count" invisible="1"/>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACTION pour ouvrir le wizard -->
+    <record id="qdv_replace_article_wizard_action" model="ir.actions.act_window">
+        <field name="name">🔄 Remplacement en masse d'articles</field>
+        <field name="res_model">qdv.replace.article.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

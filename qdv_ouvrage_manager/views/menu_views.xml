@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu racine -->
+    <menuitem id="menu_qdv_ouvrage_root"
+              name="QDV Ouvrages"
+              web_icon="qdv_ouvrage_manager,static/description/icon.png"
+              sequence="55"/>
+
+    <!-- ── Sous-menu Ouvrages ──────────────────────────────────── -->
+    <menuitem id="menu_qdv_ouvrages"
+              name="Ouvrages"
+              parent="menu_qdv_ouvrage_root"
+              sequence="10"/>
+
+    <menuitem id="menu_qdv_ouvrage_list"
+              name="Tous les ouvrages"
+              parent="menu_qdv_ouvrages"
+              action="qdv_ouvrage_action"
+              sequence="10"/>
+
+    <menuitem id="menu_qdv_ouvrage_modified"
+              name="🔶 Ouvrages modifiés"
+              parent="menu_qdv_ouvrages"
+              action="qdv_ouvrage_modified_action"
+              sequence="20"/>
+
+    <!-- Articles gérés par qdv_tarifs_manager et qdv_sync_v7 -->
+    <!-- Le picker dans chaque ouvrage permet d'accéder aux bases -->
+
+    <!-- ── Sous-menu Import / Export ──────────────────────────── -->
+    <menuitem id="menu_qdv_import_export"
+              name="Import / Export"
+              parent="menu_qdv_ouvrage_root"
+              sequence="20"/>
+
+    <menuitem id="menu_qdv_creer_ouvrage"
+              name="➕ Créer un ouvrage"
+              parent="menu_qdv_import_export"
+              action="qdv_creer_ouvrage_action"
+              sequence="5"/>
+
+    <menuitem id="menu_qdv_discovery"
+              name="🔍 Découverte automatique (.grp)"
+              parent="menu_qdv_import_export"
+              action="qdv_discovery_wizard_action"
+              sequence="10"/>
+
+    <menuitem id="menu_qdv_replace_article"
+              name="🔄 Remplacement en masse d'articles"
+              parent="menu_qdv_import_export"
+              action="qdv_replace_article_wizard_action"
+              sequence="20"/>
+
+    <!-- ── Sous-menu Bases ─────────────────────────────────────── -->
+    <menuitem id="menu_qdv_bases"
+              name="Bases d'ouvrage"
+              parent="menu_qdv_ouvrage_root"
+              sequence="30"/>
+
+    <menuitem id="menu_qdv_ouvrage_base_list"
+              name="Bases d'ouvrage (.grp)"
+              parent="menu_qdv_bases"
+              action="qdv_ouvrage_base_action"
+              sequence="10"/>
+
+    <menuitem id="menu_qdv_ouvrage_famille_list"
+              name="Familles"
+              parent="menu_qdv_bases"
+              action="qdv_ouvrage_famille_action"
+              sequence="20"/>
+
+    <!-- ── Configuration ──────────────────────────────────────── -->
+    <menuitem id="menu_qdv_config"
+              name="Configuration"
+              parent="menu_qdv_ouvrage_root"
+              sequence="99"/>
+
+    <menuitem id="menu_qdv_ouvrage_config"
+              name="⚙️ Configuration"
+              parent="menu_qdv_config"
+              action="qdv_ouvrage_config_open_action"
+              sequence="10"/>
+
+</odoo>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         FORM VIEW - Base d'ouvrage
+    ============================================================ -->
+    <record id="qdv_ouvrage_base_form_view" model="ir.ui.view">
+        <field name="name">qdv.ouvrage.base.form</field>
+        <field name="model">qdv.ouvrage.base</field>
+        <field name="arch" type="xml">
+            <form string="Base d'ouvrage QDV7">
+                <header>
+                    <button name="action_import_from_server"
+                            string="🖥️ Importer depuis le serveur"
+                            type="object"
+                            invisible="not file_path"
+                            class="btn-primary"
+                            help="Relit le fichier .grp depuis le chemin serveur configuré"/>
+                    <button name="action_import_grp"
+                            string="📥 Importer un fichier .grp"
+                            type="object"
+                            class="btn-secondary"/>
+                    <button name="action_export_json"
+                            string="📤 Exporter JSON"
+                            type="object"
+                            invisible="state not in ('imported', 'modified', 'exported')"
+                            class="btn-secondary"/>
+                    <button name="action_reset_modified"
+                            string="🔄 Réinitialiser modifications"
+                            type="object"
+                            invisible="state != 'modified'"
+                            class="btn-warning"
+                            confirm="Remettre tous les ouvrages à l'état non modifié ?"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,imported,modified,exported"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_ouvrages"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-wrench">
+                            <field name="ouvrage_count" widget="statinfo" string="Ouvrages"/>
+                        </button>
+                        <button type="object"
+                                name="action_view_modified"
+                                class="oe_stat_button"
+                                icon="fa-exclamation-circle">
+                            <field name="modified_count" widget="statinfo" string="Modifiés"/>
+                        </button>
+                        <button name="action_view_familles"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-folder-open">
+                            <field name="famille_count" widget="statinfo" string="Familles"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Nom de la base d'ouvrage..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Informations">
+                            <field name="file_path"
+                                   placeholder="C:\Users\dimitri\Mon Drive\Base QDV\Base article et ouvrage\MaBase.grp"/>
+                            <field name="file_version"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Import/Export">
+                            <field name="date_import"/>
+                            <field name="import_user_id"/>
+                            <field name="date_export"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Description de cette base d'ouvrages..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- LIST VIEW -->
+    <record id="qdv_ouvrage_base_list_view" model="ir.ui.view">
+        <field name="name">qdv.ouvrage.base.list</field>
+        <field name="model">qdv.ouvrage.base</field>
+        <field name="arch" type="xml">
+            <list string="Bases d'ouvrage QDV7" decoration-warning="state == 'modified'">
+                <field name="name"/>
+                <field name="file_version"/>
+                <field name="ouvrage_count"/>
+                <field name="modified_count"/>
+                <field name="famille_count"/>
+                <field name="date_import"/>
+                <field name="date_export"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'imported'"
+                       decoration-warning="state == 'modified'"
+                       decoration-primary="state == 'exported'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="qdv_ouvrage_base_action" model="ir.actions.act_window">
+        <field name="name">Bases d'ouvrage</field>
+        <field name="res_model">qdv.ouvrage.base</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune base d'ouvrage importée
+            </p>
+            <p>
+                Utilisez <strong>Import / Export → 🔍 Découverte automatique</strong>
+                pour trouver et importer vos fichiers <strong>.grp</strong>
+                depuis votre dossier Google Drive.
+            </p>
+        </field>
+    </record>
+
+</odoo>
